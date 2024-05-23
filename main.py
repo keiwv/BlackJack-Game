@@ -33,11 +33,6 @@ GAME_STATE_PLAYER1 = 1
 GAME_STATE_PLAYER2 = 1
 GAME_STATE_PLAYER3 = 1
 
-P1L = False
-P2L = False
-P3L = False
-HL = False
-
 
 # ------------------------------ BUTTONS ------------------------------
 
@@ -87,7 +82,7 @@ resized_image_surface3.blit(resized_image3, (0, 0))
 
 
 def update():
-    global GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3, P1L, P2L, P3L, HL
+    global GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3
 
     if (lose(PLAYER1) == True):
         GAME_STATE_PLAYER1 = 0
@@ -95,7 +90,6 @@ def update():
         GAME_STATE_PLAYER2 = 0
     if (lose(PLAYER3) == True):
         GAME_STATE_PLAYER3 = 0
-    drawCards(P1L, P2L, P3L, HL)
 
 
 def draw():
@@ -113,6 +107,9 @@ def draw():
     if (GAME_STATE_PLAYER1 == 0):
         screen.draw.text("Player 1 lose", (265, 500),
                          fontsize=50, color="red", shadow=(1, 1))
+
+    # imagen = IMAGES.get("2_de_Corazones")
+    # screen.blit(imagen, (0, 0))
 
     drawCardsDisplay()
     #! LOGICA PARA CUANDO SE AGREGUE UN BOTON DE DAR OTRA CARTA
@@ -143,10 +140,28 @@ def moreCards(player):
         if (player.count(11) == 2):
             player.remove(11)
             player.append(1)
+            if (sum(player) > 21):
+                player.remove(11)
+                player.append(1)
         if (sum(player) > 21):
-            GAME_STATE_PLAYER1 = 0
+            if (player.count(11) == 1):
+                player.remove(11)
+                player.append(1)
+            else:
+                GAME_STATE_PLAYER1 = 0
         if (sum(player) == 21):
-            GAME_STATE_PLAYER1 = 4
+            GAME_STATE_PLAYER1 = 4  # ! CORREGIR ESTO, NO SIEMPRE ES PLAYER 1
+
+        i = len(player) - 1
+        if player[i] == 10:  # ! CORREGIR ESTO, NO SIEMPRE ES NAMECARD1
+            NAMECARD1.append(random.choice(["Jota", "Reina", "Rey"]) + "_de_" + random.choice(
+                ["Corazones", "Diamantes", "Espadas", "Tréboles"]))
+        elif (player[i] == 11 or player[i] == 1):
+            NAMECARD1.append(
+                "As_de_" + random.choice(["Corazones", "Diamantes", "Espadas", "Tréboles"]))
+        else:
+            NAMECARD1.append(str(player[i]) + "_de_" + random.choice(
+                ["Corazones", "Diamantes", "Espadas", "Tréboles"]))
 
 # Logic of the game
 
@@ -192,6 +207,8 @@ def logic():
         if (sum(HOUSE) > 16 and sum(HOUSE) < 22):
             GAME_STATE_HOUSE = 0
 
+    drawCards()
+
     #! Esto es para hacer debug
     print("Cards player 1 ", PLAYER1)
     print("Cards player 2 ", PLAYER2)
@@ -201,68 +218,57 @@ def logic():
 # Funtion to draw the cards with the images and random figures
 
 
-def drawCards(P1L, P2L, P3L, HL):
-    global PLAYER1, PLAYER2, PLAYER3, HOUSE, NAMECARD1, NAMECARD2, NAMECARD3, NAMECARDHOUSE
-    NAMECARD1 = []
-    NAMECARD2 = []
-    NAMECARD3 = []
-    NAMECARDHOUSE = []
+def drawCards():
+    global NAMECARD1, NAMECARD2, NAMECARD3, NAMECARDHOUSE
 
     # Name of player 1 cards
-    if (P1L == False):
-        P1L = True
-        for i in range(len(PLAYER1)):
-            if PLAYER1[i] == 10:
-                print("Entro al 10")
-                NAMECARD1.append(random.choice(["Jota", "Reina", "Rey"]) + "_de_" + random.choice(
-                    ["Corazones", "Diamantes", "Espadas", "Tréboles"]) + ".png")
-            elif PLAYER1[i] == 11:
-                print("Entro al 11")
-                NAMECARD1.append(
-                    "As_de_" + random.choice(["Corazones", "Diamantes", "Espadas", "Tréboles"]) + ".png")
-            else:
-                NAMECARD1.append(str(PLAYER1[i]) + "_de_" + random.choice(
-                    ["Corazones", "Diamantes", "Espadas", "Tréboles"]) + ".png")
-    print("Cartas de player 1 ", NAMECARD1)
-    #! Esto es para hacer debug
+    for i in range(len(PLAYER1)):
+        if PLAYER1[i] == 10:
+            NAMECARD1.append(random.choice(["Jota", "Reina", "Rey"]) + "_de_" + random.choice(
+                ["Corazones", "Diamantes", "Espadas", "Tréboles"]))
+        elif PLAYER1[i] == 11 or PLAYER1[i] == 1:
+            NAMECARD1.append(
+                "As_de_" + random.choice(["Corazones", "Diamantes", "Espadas", "Tréboles"]))
+        else:
+            NAMECARD1.append(str(PLAYER1[i]) + "_de_" + random.choice(
+                ["Corazones", "Diamantes", "Espadas", "Tréboles"]))
+    print("Cartas de player 1 nombre real", NAMECARD1)
 
     # Name of player 2 cards
     for i in range(len(PLAYER2)):
         if PLAYER2[i] == 10:
             NAMECARD2.append(random.choice(["Jota", "Reina", "Rey"]) + "_de_" + random.choice(
-                ["Corazones", "Diamantes", "Espadas", "Tréboles"]) + ".png")
-        elif PLAYER2[i] == 11:
+                ["Corazones", "Diamantes", "Espadas", "Tréboles"]))
+        elif PLAYER2[i] == 11 or PLAYER2[i] == 1:
             NAMECARD2.append(
-                "As_de_" + random.choice(["Corazones", "Diamantes", "Espadas", "Tréboles"]) + ".png")
+                "As_de_" + random.choice(["Corazones", "Diamantes", "Espadas", "Tréboles"]))
         else:
             NAMECARD2.append(str(PLAYER2[i]) + "_de_" + random.choice(
-                ["Corazones", "Diamantes", "Espadas", "Tréboles"]) + ".png")
+                ["Corazones", "Diamantes", "Espadas", "Tréboles"]))
 
     # Name of player 3 cards
     for i in range(len(PLAYER3)):
         if PLAYER3[i] == 10:
             NAMECARD3.append(random.choice(["Jota", "Reina", "Rey"]) + "_de_" + random.choice(
-                ["Corazones", "Diamantes", "Espadas", "Tréboles"]) + ".png")
-        elif PLAYER3[i] == 11:
+                ["Corazones", "Diamantes", "Espadas", "Tréboles"]))
+        elif PLAYER3[i] == 11 or PLAYER3[i] == 1:
             NAMECARD3.append(
-                "As_de_" + random.choice(["Corazones", "Diamantes", "Espadas", "Tréboles"]) + ".png")
+                "As_de_" + random.choice(["Corazones", "Diamantes", "Espadas", "Tréboles"]))
         else:
             NAMECARD3.append(str(PLAYER3[i]) + "_de_" + random.choice(
-                ["Corazones", "Diamantes", "Espadas", "Tréboles"]) + ".png")
+                ["Corazones", "Diamantes", "Espadas", "Tréboles"]))
 
     # Name of house cards
     for i in range(len(HOUSE)):
         if HOUSE[i] == 10:
             NAMECARDHOUSE.append(random.choice(["Jota", "Reina", "Rey"]) + "_de_" + random.choice(
-                ["Corazones", "Diamantes", "Espadas", "Tréboles"]) + ".png")
-        elif HOUSE[i] == 11:
+                ["Corazones", "Diamantes", "Espadas", "Tréboles"]))
+        elif HOUSE[i] == 11 or HOUSE[i] == 1:
             NAMECARDHOUSE.append(
-                "As_de_" + random.choice(["Corazones", "Diamantes", "Espadas", "Tréboles"]) + ".png")
+                "As_de_" + random.choice(["Corazones", "Diamantes", "Espadas", "Tréboles"]))
         else:
             NAMECARDHOUSE.append(str(HOUSE[i]) + "_de_" + random.choice(
-                ["Corazones", "Diamantes", "Espadas", "Tréboles"]) + ".png")
-
-    return P1L, P2L, P3L, HL
+                ["Corazones", "Diamantes", "Espadas", "Tréboles"]))
 
 
 # ------------------------------ LOAD CARD IMAGES AND DRAW IT ------------------------------
@@ -272,8 +278,8 @@ def drawCards(P1L, P2L, P3L, HL):
 
 def loadImages():
     images = {}
-    for filename in os.listdir("images\cards"):
-        path = os.path.join("images\cards", filename)
+    for filename in os.listdir("images/cards"):
+        path = os.path.join("images/cards", filename)
         if os.path.isfile(path):
             images[os.path.splitext(filename)[0]] = pygame.image.load(path)
     return images
@@ -289,7 +295,10 @@ def drawCardsDisplay():
     for i, card_name in enumerate(NAMECARD1):
         card_image = IMAGES.get(card_name)
         if card_image:
-            screen.blit(card_image, (450, 500))
+            card_pos = (PLAYER1_IMAGE_POS[0] + i * 50, PLAYER1_IMAGE_POS[1])
+            screen.blit(card_image, card_pos)
+        else:
+            print(f"Imagen no encontrada: {card_name}")
 
     # Dibujar las cartas de PLAYER2
     for i, card_name in enumerate(NAMECARD2):
@@ -297,6 +306,8 @@ def drawCardsDisplay():
         if card_image:
             card_pos = (PLAYER2_IMAGE_POS[0] + i * 50, PLAYER2_IMAGE_POS[1])
             screen.blit(card_image, card_pos)
+        else:
+            print(f"Imagen no encontrada: {card_name}")
 
     # Dibujar las cartas de PLAYER3
     for i, card_name in enumerate(NAMECARD3):
@@ -304,6 +315,8 @@ def drawCardsDisplay():
         if card_image:
             card_pos = (PLAYER3_IMAGE_POS[0] + i * 50, PLAYER3_IMAGE_POS[1])
             screen.blit(card_image, card_pos)
+        else:
+            print(f"Imagen no encontrada: {card_name}")
 
     # Dibujar las cartas de HOUSE
     for i, card_name in enumerate(NAMECARDHOUSE):
@@ -311,6 +324,8 @@ def drawCardsDisplay():
         if card_image:
             card_pos = (i * 50, 100)
             screen.blit(card_image, card_pos)
+        else:
+            print(f"Imagen no encontrada: {card_name}")
 
 
 def restart():
