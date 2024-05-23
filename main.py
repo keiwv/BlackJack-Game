@@ -30,14 +30,23 @@ SCHOUSE = 0
 
 # Game state
 
-# 1 = Playing, 0 = House wins, 3 = House wins with 21 or in the first play
+# 1 = Playing, 0 = House wins, 3 = House wins with 21 or in the first play, 4 = Player wins 
 GAME_STATE_HOUSE = 1
 GAME_STATE_PLAYER1 = 1
 GAME_STATE_PLAYER2 = 1
 GAME_STATE_PLAYER3 = 1
 
+#! Botones
+# Definir la posición y el tamaño del botón
+button_x = 350
+button_y = 580
+button_width = 100
+button_height = 70
+button_color = (0, 179, 252)  # Verde
+
 
 #! Load the images
+
 # Position of the players image
 PLAYER1_IMAGE_POS = (280, 635)
 PLAYER2_IMAGE_POS = (602, 652)
@@ -48,14 +57,12 @@ PLAYER1_IMAGE = pygame.image.load("images/player 1 .png")  # Load image
 PLAYER2_IMAGE = pygame.image.load("images/player 2.png")  # Load image
 PLAYER3_IMAGE = pygame.image.load("images/player 3.png")  # Load image
 
-
 # Resize the image
 new_width = 300
 new_height = 200
 resized_image1 = pygame.transform.scale(PLAYER1_IMAGE, (new_width, new_height))
 resized_image2 = pygame.transform.scale(PLAYER2_IMAGE, (new_width + 15, new_height))
 resized_image3 = pygame.transform.scale(PLAYER3_IMAGE, (new_width, new_height))
-
 
 
 # Convertir la imagen redimensionada a un Surface de Pygame Zero
@@ -71,25 +78,58 @@ resized_image_surface3 = pygame.Surface(
     (new_width, new_height), pygame.SRCALPHA)
 resized_image_surface3.blit(resized_image3, (0, 0))
 
+def update():
+    global GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3
+
+    if (lose(PLAYER1) == True):
+        GAME_STATE_PLAYER1 = 0
+    if (lose(PLAYER2) == True):
+        GAME_STATE_PLAYER2 = 0
+    if (lose(PLAYER3) == True):
+        GAME_STATE_PLAYER3 = 0
+
 def draw():
-    logic()
+    print("Cartas de player1 ", PLAYER1)
     screen.clear()
     screen.blit('blackjack_fondo', (0, 0))
     screen.blit(resized_image_surface1, PLAYER1_IMAGE_POS)
     screen.blit(resized_image_surface2, PLAYER2_IMAGE_POS)
     screen.blit(resized_image_surface3, PLAYER3_IMAGE_POS)
+
+    screen.draw.filled_rect(Rect((button_x, button_y), (button_width, button_height)), button_color)
+    screen.draw.text("HIT", (button_x + 30, button_y + 25), fontsize=30, color="black")
+    if(GAME_STATE_PLAYER1 == 0):
+        screen.draw.text("Player 1 lose", (265, 500), fontsize=50, color="red", shadow=(1, 1))
+
     #! LOGICA PARA CUANDO SE AGREGUE UN BOTON DE DAR OTRA CARTA
 
+def on_mouse_down(pos):
+    # Verificar si el clic fue dentro del área del botón
+    if button_x <= pos[0] <= button_x + button_width and button_y <= pos[1] <= button_y + button_height:
+        moreCards(PLAYER1)
+
+
+# Funtion to know if a player lose
+def lose(player):
+    if (sum(player) > 21):
+        return True
+    else:
+        return False
+
 # Function to take one more cards
-
-
 def moreCards(player):
     print("More cards")
     numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-    player.append((random.choice(numbers)))
-    if (player.count(11) == 2):
-        player.remove(11)
-        player.append(1)
+    if(sum(player) < 21):
+        player.append((random.choice(numbers)))
+        if (player.count(11) == 2):
+            player.remove(11)
+            player.append(1)
+        if (sum(player) > 21):
+            GAME_STATE_PLAYER1 = 0
+        if (sum(player) == 21):
+            GAME_STATE_PLAYER1 = 4
+    
 
 
 # Logic of the game
@@ -152,6 +192,9 @@ def logic():
     print("Cards player 3 ", PLAYER3)
     print("Cards house ", HOUSE)
 
+def restart():
+    logic()
 
 # Run the game
+logic()
 pgzrun.go()
