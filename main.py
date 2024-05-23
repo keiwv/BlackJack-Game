@@ -6,6 +6,9 @@ import math
 # Window size (background image size DON'T CHANGE)
 WIDTH = 1286
 HEIGHT = 772
+CENTER_X = WIDTH / 2
+CENTER_Y = HEIGHT / 2
+CENTER = (CENTER_X, CENTER_Y)
 
 # Players and house cards list
 PLAYER1 = []
@@ -57,6 +60,18 @@ def draw():
     screen.clear()
     screen.blit('blackjack_fondo', (0, 0))
     screen.blit(resized_image_surface, PLAYER1_IMAGE_POS)
+    #! LOGICA PARA CUANDO SE AGREGUE UN BOTON DE DAR OTRA CARTA
+
+# Function to take one more cards
+
+
+def moreCards(player):
+    print("More cards")
+    numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+    player.append((random.choice(numbers)))
+    if (player.count(11) == 2):
+        player.remove(11)
+        player.append(1)
 
 
 # Logic of the game
