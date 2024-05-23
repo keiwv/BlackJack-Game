@@ -43,6 +43,9 @@ button_width = 100
 button_height = 70
 button_color = (0, 179, 252)  # Verde
 
+# Cards size
+CARD_WIDTH = 75
+CARD_HEIGHT = 125
 
 # ------------------------------ IMAGES ------------------------------
 
@@ -295,6 +298,7 @@ def drawCardsDisplay():
     for i, card_name in enumerate(NAMECARD1):
         card_image = IMAGES.get(card_name)
         if card_image:
+            card_image = resizeCards(card_image)
             card_pos = (PLAYER1_IMAGE_POS[0] + i * 50, PLAYER1_IMAGE_POS[1])
             screen.blit(card_image, card_pos)
         else:
@@ -304,6 +308,7 @@ def drawCardsDisplay():
     for i, card_name in enumerate(NAMECARD2):
         card_image = IMAGES.get(card_name)
         if card_image:
+            card_image = resizeCards(card_image)
             card_pos = (PLAYER2_IMAGE_POS[0] + i * 50, PLAYER2_IMAGE_POS[1])
             screen.blit(card_image, card_pos)
         else:
@@ -313,6 +318,7 @@ def drawCardsDisplay():
     for i, card_name in enumerate(NAMECARD3):
         card_image = IMAGES.get(card_name)
         if card_image:
+            card_image = resizeCards(card_image)
             card_pos = (PLAYER3_IMAGE_POS[0] + i * 50, PLAYER3_IMAGE_POS[1])
             screen.blit(card_image, card_pos)
         else:
@@ -322,10 +328,17 @@ def drawCardsDisplay():
     for i, card_name in enumerate(NAMECARDHOUSE):
         card_image = IMAGES.get(card_name)
         if card_image:
+            card_image = resizeCards(card_image)
             card_pos = (i * 50, 100)
             screen.blit(card_image, card_pos)
         else:
             print(f"Imagen no encontrada: {card_name}")
+
+
+# Function to resize the cards
+def resizeCards(image):
+    resized_card = pygame.transform.scale(image, (CARD_WIDTH, CARD_HEIGHT))
+    return resized_card
 
 
 def restart():
