@@ -16,17 +16,11 @@ PLAYER2 = []
 PLAYER3 = []
 HOUSE = []
 
-# First cards
-FCPLAYER1 = 0
-FCPLAYER2 = 0
-FCPLAYER3 = 0
-FCHOUSE = 0
-
-# Second cards
-SCPLAYER1 = 0
-SCPLAYER2 = 0
-SCPLAYER3 = 0
-SCHOUSE = 0
+# Variables to take the cards of the images folder
+NAMECARD1 = []
+NAMECARD2 = []
+NAMECARD3 = []
+NAMECARDHOUSE = []
 
 # Game state
 
@@ -87,6 +81,7 @@ def update():
         GAME_STATE_PLAYER2 = 0
     if (lose(PLAYER3) == True):
         GAME_STATE_PLAYER3 = 0
+    drawCards()
 
 def draw():
     print("Cartas de player1 ", PLAYER1)
@@ -100,6 +95,7 @@ def draw():
     screen.draw.text("HIT", (button_x + 30, button_y + 25), fontsize=30, color="black")
     if(GAME_STATE_PLAYER1 == 0):
         screen.draw.text("Player 1 lose", (265, 500), fontsize=50, color="red", shadow=(1, 1))
+    
 
     #! LOGICA PARA CUANDO SE AGREGUE UN BOTON DE DAR OTRA CARTA
 
@@ -134,7 +130,7 @@ def moreCards(player):
 
 # Logic of the game
 def logic():
-    global GAME_STATE_HOUSE, GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3, PLAYER1, PLAYER2, PLAYER3, HOUSE, FCPLAYER1, FCPLAYER2, FCPLAYER3, FCHOUSE, SCPLAYER1, SCPLAYER2, SCPLAYER3, SCHOUSE
+    global GAME_STATE_HOUSE, GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3, PLAYER1, PLAYER2, PLAYER3, HOUSE
     numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
     firstPlay = 0  # This is to control the first play of the house
 
@@ -159,18 +155,6 @@ def logic():
             PLAYER3.remove(11)
             PLAYER3.append(1)
 
-        if i == 0:
-            # Variables to take the cards of the images folder
-            FCPLAYER1 = PLAYER1[i]
-            FCPLAYER2 = PLAYER2[i]
-            FCPLAYER3 = PLAYER3[i]
-            FCHOUSE = HOUSE[i]
-        else:
-            SCPLAYER1 = PLAYER1[i]
-            SCPLAYER2 = PLAYER2[i]
-            SCPLAYER3 = PLAYER3[i]
-            SCHOUSE = HOUSE[i]
-
     while (GAME_STATE_HOUSE == 1):
         # This is to control the cards taken by the house
         if (firstPlay == 0 and sum(HOUSE) == 21):
@@ -194,6 +178,54 @@ def logic():
 
 def restart():
     logic()
+
+#Funtion to draw the cards with the images and random figures
+def drawCards():
+    global PLAYER1, PLAYER2, PLAYER3, HOUSE, NAMECARD1, NAMECARD2, NAMECARD3, NAMECARDHOUSE
+    NAMECARD1 = []
+    NAMECARD2 = []
+    NAMECARD3 = []
+    NAMECARDHOUSE = []
+
+    # Name of player 1 cards
+    for i in range(len(PLAYER1)):
+        if PLAYER1[i] == 10:
+            print("Entro al 10")
+            NAMECARD1.append(random.choice(["Jota", "Reina", "Rey"]) + "_de_" + random.choice(["Corazones", "Diamantes", "Espadas", "Tréboles"]) + ".png")
+        elif PLAYER1[i] == 11:
+            print("Entro al 11")
+            NAMECARD1.append("As_de_" + random.choice(["Corazones", "Diamantes", "Espadas", "Tréboles"]) + ".png")
+        else:
+            NAMECARD1.append(str(PLAYER1[i]) + "_de_" + random.choice(["Corazones", "Diamantes", "Espadas", "Tréboles"]) + ".png")
+    #! ES PARA DEBUGEAR
+    print(NAMECARD1)
+
+    # Name of player 2 cards
+    for i in range(len(PLAYER2)):
+        if PLAYER2[i] == 10:
+            NAMECARD2.append(random.choice(["Jota", "Reina", "Rey"]) + "_de_" + random.choice(["Corazones", "Diamantes", "Espadas", "Tréboles"]) + ".png")
+        elif PLAYER2[i] == 11:
+            NAMECARD2.append("As_de_" + random.choice(["Corazones", "Diamantes", "Espadas", "Tréboles"]) + ".png")
+        else:
+            NAMECARD2.append(str(PLAYER2[i]) + "_de_" + random.choice(["Corazones", "Diamantes", "Espadas", "Tréboles"]) + ".png")
+    
+    # Name of player 3 cards
+    for i in range(len(PLAYER3)):
+        if PLAYER3[i] == 10:
+            NAMECARD3.append(random.choice(["Jota", "Reina", "Rey"]) + "_de_" + random.choice(["Corazones", "Diamantes", "Espadas", "Tréboles"]) + ".png")
+        elif PLAYER3[i] == 11:
+            NAMECARD3.append("As_de_" + random.choice(["Corazones", "Diamantes", "Espadas", "Tréboles"]) + ".png")
+        else:
+            NAMECARD3.append(str(PLAYER3[i]) + "_de_" + random.choice(["Corazones", "Diamantes", "Espadas", "Tréboles"]) + ".png")
+    
+    # Name of house cards
+    for i in range(len(HOUSE)):
+        if HOUSE[i] == 10:
+            NAMECARDHOUSE.append(random.choice(["Jota", "Reina", "Rey"]) + "_de_" + random.choice(["Corazones", "Diamantes", "Espadas", "Tréboles"]) + ".png")
+        elif HOUSE[i] == 11:
+            NAMECARDHOUSE.append("As_de_" + random.choice(["Corazones", "Diamantes", "Espadas", "Tréboles"]) + ".png")
+        else:
+            NAMECARDHOUSE.append(str(HOUSE[i]) + "_de_" + random.choice(["Corazones", "Diamantes", "Espadas", "Tréboles"]) + ".png")
 
 # Run the game
 logic()
