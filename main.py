@@ -39,27 +39,45 @@ GAME_STATE_PLAYER3 = 1
 
 #! Load the images
 # Position of the players image
-PLAYER1_IMAGE_POS = (270, 600)
+PLAYER1_IMAGE_POS = (280, 635)
+PLAYER2_IMAGE_POS = (602, 652)
+PLAYER3_IMAGE_POS = (927, 635)
 
 # Cargar la imagen PNG con transparencia
-PLAYER1_IMAGE = pygame.image.load("images/perfil1.png")  # Load image
+PLAYER1_IMAGE = pygame.image.load("images/player 1 .png")  # Load image
+PLAYER2_IMAGE = pygame.image.load("images/player 2.png")  # Load image
+PLAYER3_IMAGE = pygame.image.load("images/player 3.png")  # Load image
+
 
 # Resize the image
-new_width = 200
-new_height = 150
-resized_image = pygame.transform.scale(PLAYER1_IMAGE, (new_width, new_height))
+new_width = 300
+new_height = 200
+resized_image1 = pygame.transform.scale(PLAYER1_IMAGE, (new_width, new_height))
+resized_image2 = pygame.transform.scale(PLAYER2_IMAGE, (new_width + 15, new_height))
+resized_image3 = pygame.transform.scale(PLAYER3_IMAGE, (new_width, new_height))
+
+
 
 # Convertir la imagen redimensionada a un Surface de Pygame Zero
-resized_image_surface = pygame.Surface(
+resized_image_surface1 = pygame.Surface(
     (new_width, new_height), pygame.SRCALPHA)
-resized_image_surface.blit(resized_image, (0, 0))
+resized_image_surface1.blit(resized_image1, (0, 0))
 
+resized_image_surface2 = pygame.Surface(
+    (new_width, new_height), pygame.SRCALPHA)
+resized_image_surface2.blit(resized_image2, (0, 0))
+
+resized_image_surface3 = pygame.Surface(
+    (new_width, new_height), pygame.SRCALPHA)
+resized_image_surface3.blit(resized_image3, (0, 0))
 
 def draw():
     logic()
     screen.clear()
     screen.blit('blackjack_fondo', (0, 0))
-    screen.blit(resized_image_surface, PLAYER1_IMAGE_POS)
+    screen.blit(resized_image_surface1, PLAYER1_IMAGE_POS)
+    screen.blit(resized_image_surface2, PLAYER2_IMAGE_POS)
+    screen.blit(resized_image_surface3, PLAYER3_IMAGE_POS)
     #! LOGICA PARA CUANDO SE AGREGUE UN BOTON DE DAR OTRA CARTA
 
 # Function to take one more cards
