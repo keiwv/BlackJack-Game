@@ -27,7 +27,7 @@ NAMECARD3 = []
 NAMECARDHOUSE = []
 
 
-# 1 = Playing, 0 = House wins, 3 = House wins with 21 or in the first play, 4 = Player wins
+# 1 = Playing, 0 = House wins, 3 = House wins with 21 or in the first play, 4 = Player wins, 5 = end turn
 GAME_STATE_HOUSE = 1
 GAME_STATE_PLAYER1 = 1
 GAME_STATE_PLAYER2 = 1
@@ -36,13 +36,13 @@ GAME_STATE_PLAYER3 = 1
 
 # ------------------------------ BUTTONS ------------------------------
 
-# Definir la posición y el tamaño del botón
+# Define the position and size of the button
 button_x = 350
 button_y = 605
 button_width = 80
 button_height = 35
-button_color_hit = (0, 179, 252)  # Verde
-button_color_stand = (255, 31, 44)  # Rojo
+button_color_hit = (0, 179, 252)  # Blue
+button_color_stand = (255, 31, 44)  # Red
 
 # Cards size
 CARD_WIDTH = 75
@@ -55,7 +55,7 @@ PLAYER1_IMAGE_POS = (280, 635)
 PLAYER2_IMAGE_POS = (602, 652)
 PLAYER3_IMAGE_POS = (927, 635)
 
-# Cargar la imagen PNG con transparencia
+# Load PNG images with transparency
 PLAYER1_IMAGE = pygame.image.load("images/player 1 .png")  # Load image
 PLAYER2_IMAGE = pygame.image.load("images/player 2.png")  # Load image
 PLAYER3_IMAGE = pygame.image.load("images/player 3.png")  # Load image
@@ -69,7 +69,7 @@ resized_image2 = pygame.transform.scale(
 resized_image3 = pygame.transform.scale(PLAYER3_IMAGE, (new_width, new_height))
 
 
-# Convertir la imagen redimensionada a un Surface de Pygame Zero
+# Convert the resized image to a Pygame Zero Surface
 resized_image_surface1 = pygame.Surface(
     (new_width, new_height), pygame.SRCALPHA)
 resized_image_surface1.blit(resized_image1, (0, 0))
@@ -82,22 +82,26 @@ resized_image_surface3 = pygame.Surface(
     (new_width, new_height), pygame.SRCALPHA)
 resized_image_surface3.blit(resized_image3, (0, 0))
 
-# ------------------------------ FUNTIONS ------------------------------
+# ------------------------------ FUNCTIONS ------------------------------
 
 
 def update():
     global GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3
 
-    if (lose(PLAYER1) == True):
+    if lose(PLAYER1):
         GAME_STATE_PLAYER1 = 0
-    if (lose(PLAYER2) == True):
+    if lose(PLAYER2):
         GAME_STATE_PLAYER2 = 0
-    if (lose(PLAYER3) == True):
+    if lose(PLAYER3):
         GAME_STATE_PLAYER3 = 0
+    if passTurn():
+        GAME_STATE_PLAYER1 = 5
+    if blackjack(PLAYER1):
+        GAME_STATE_PLAYER1 = 4
 
 
 def draw():
-    print("Cartas de player1 ", PLAYER1)
+    global GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3
     screen.clear()
     screen.blit('blackjack_fondo', (0, 0))
     screen.blit(resized_image_surface1, PLAYER1_IMAGE_POS)
@@ -109,62 +113,69 @@ def draw():
     screen.draw.text("HIT", (button_x + 23, button_y + 10),
                      fontsize=30, color="black")
 
+    drawCardsDisplay()
     screen.draw.filled_rect(
         Rect((button_x - 110, button_y), (button_width, button_height)), button_color_stand)
     screen.draw.text("STAND", (button_x - 105, button_y + 10),
                      fontsize=30, color="black")
 
-    if (GAME_STATE_PLAYER1 == 0):
-        screen.draw.text("Player 1 lose", (265, 500),
+    if GAME_STATE_PLAYER1 == 0:
+        screen.draw.text("LOSE", (295, 500),
                          fontsize=50, color="red", shadow=(1, 1))
+    if GAME_STATE_PLAYER1 == 5:
+        screen.draw.text("STAND", (295, 500), fontsize=50,
+                         color="red", shadow=(1, 1))
+    if GAME_STATE_PLAYER1 == 4:
+        screen.draw.text("BLACKJACK", (295, 500),
+                         fontsize=50, color="yellow", shadow=(1, 1))
 
-    drawCardsDisplay()
 
 
+
+# Function to know if the mouse is clicked
 def on_mouse_down(pos):
-    # Verificar si el clic fue dentro del área del botón
+    global GAME_STATE_PLAYER1
+    # Check if the click was within the button area
     if button_x <= pos[0] <= button_x + button_width and button_y <= pos[1] <= button_y + button_height:
         moreCards(PLAYER1)
     elif button_x - 110 <= pos[0] <= button_x - 110 + button_width and button_y <= pos[1] <= button_y + button_height:
-        passTurn(PLAYER1)
+        GAME_STATE_PLAYER1 = 5
+        return GAME_STATE_PLAYER1
 
-# Funtion to know if a player lose
+# Function to check if a player loses
 
 
 def lose(player):
-    if (sum(player) > 21):
-        return True
-    else:
-        return False
+    return sum(player) > 21
 
-# Function to take one more cards
+# Function to take one more card
 
 
 def moreCards(player):
-    print("More cards")
+    global GAME_STATE_PLAYER1
     numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-    if (sum(player) < 21):
+    if sum(player) < 21:
         player.append((random.choice(numbers)))
-        if (player.count(11) == 2):
+        if player.count(11) == 2:
             player.remove(11)
             player.append(1)
-            if (sum(player) > 21):
+            if sum(player) > 21:
                 player.remove(11)
                 player.append(1)
-        if (sum(player) > 21):
-            if (player.count(11) == 1):
+        if sum(player) > 21:
+            if player.count(11) == 1:
                 player.remove(11)
                 player.append(1)
             else:
                 GAME_STATE_PLAYER1 = 0
-        if (sum(player) == 21):
+        if sum(player) == 21:
             GAME_STATE_PLAYER1 = 4  # ! CORREGIR ESTO, NO SIEMPRE ES PLAYER 1
 
         i = len(player) - 1
         if player[i] == 10:  # ! CORREGIR ESTO, NO SIEMPRE ES NAMECARD1
             NAMECARD1.append(random.choice(["Jota", "Reina", "Rey"]) + "_de_" + random.choice(
                 ["Corazones", "Diamantes", "Espadas", "Tréboles"]))
-        elif (player[i] == 11 or player[i] == 1):
+        elif player[i] == 11 or player[i] == 1:
             NAMECARD1.append(
                 "As_de_" + random.choice(["Corazones", "Diamantes", "Espadas", "Tréboles"]))
         else:
@@ -172,11 +183,13 @@ def moreCards(player):
                 ["Corazones", "Diamantes", "Espadas", "Tréboles"]))
 
 
-def passTurn(player):
-    print("Pass turn")
-    screen.draw.text("STAND", (265, 500))
+def passTurn():
+    return GAME_STATE_PLAYER1 == 5
 
-# Logic of the game
+def blackjack(player):
+    return sum(player) == 21
+
+# Game logic
 
 
 def logic():
@@ -184,7 +197,7 @@ def logic():
     numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
     firstPlay = 0  # This is to control the first play of the house
 
-    # Asign cards to players and house
+    # Assign cards to players and house
     for i in range(2):
         PLAYER1.append((random.choice(numbers)))
         PLAYER2.append((random.choice(numbers)))
@@ -192,43 +205,43 @@ def logic():
         HOUSE.append((random.choice(numbers)))
 
         # This is to change the value of the card 11 to 1. Only if the player or house has two 11 cards
-        if (HOUSE.count(11) == 2):
+        if HOUSE.count(11) == 2:
             HOUSE.remove(11)
             HOUSE.append(1)
-        if (PLAYER1.count(11) == 2):
+        if PLAYER1.count(11) == 2:
             PLAYER1.remove(11)
             PLAYER1.append(1)
-        if (PLAYER2.count(11) == 2):
+        if PLAYER2.count(11) == 2:
             PLAYER2.remove(11)
             PLAYER2.append(1)
-        if (PLAYER3.count(11) == 2):
+        if PLAYER3.count(11) == 2:
             PLAYER3.remove(11)
             PLAYER3.append(1)
 
-    while (GAME_STATE_HOUSE == 1):
+    while GAME_STATE_HOUSE == 1:
         # This is to control the cards taken by the house
-        if (firstPlay == 0 and sum(HOUSE) == 21):
+        if firstPlay == 0 and sum(HOUSE) == 21:
             GAME_STATE_HOUSE = 3
-        if (sum(HOUSE) < 17):
+        if sum(HOUSE) < 17:
             HOUSE.append((random.choice(numbers)))
             # This is to change the value of the card 11 to 1. Only if the player or house has two 11 cards
-            if (HOUSE.count(11) == 2):
+            if HOUSE.count(11) == 2:
                 HOUSE.remove(11)
                 HOUSE.append(1)
-        if (sum(HOUSE) > 21 and HOUSE.count(11) < 2):
+        if sum(HOUSE) > 21 and HOUSE.count(11) < 2:
             GAME_STATE_HOUSE = 0
-        if (sum(HOUSE) > 16 and sum(HOUSE) < 22):
+        if sum(HOUSE) > 16 and sum(HOUSE) < 22:
             GAME_STATE_HOUSE = 0
 
     drawCards()
 
-    #! Esto es para hacer debug
+    #! This is for debugging
     print("Cards player 1 ", PLAYER1)
     print("Cards player 2 ", PLAYER2)
     print("Cards player 3 ", PLAYER3)
     print("Cards house ", HOUSE)
 
-# Funtion to draw the cards with the images and random figures
+# Function to draw the cards with the images and random figures
 
 
 def drawCards():
@@ -286,7 +299,7 @@ def drawCards():
 
 # ------------------------------ LOAD CARD IMAGES AND DRAW IT ------------------------------
 
-# Funtion to load the images
+# Function to load the images
 
 
 def loadImages():
@@ -304,7 +317,7 @@ IMAGES = loadImages()
 def drawCardsDisplay():
     global PLAYER1, PLAYER2, PLAYER3, HOUSE, NAMECARD1, NAMECARD2, NAMECARD3, NAMECARDHOUSE
 
-    # Dibujar las cartas de PLAYER1
+    # Draw PLAYER1 cards
     for i, card_name in enumerate(NAMECARD1):
         card_image = IMAGES.get(card_name)
         if card_image:
@@ -315,7 +328,7 @@ def drawCardsDisplay():
         else:
             print(f"Imagen no encontrada: {card_name}")
 
-    # Dibujar las cartas de PLAYER2
+    # Draw PLAYER2 cards
     for i, card_name in enumerate(NAMECARD2):
         card_image = IMAGES.get(card_name)
         if card_image:
@@ -326,7 +339,7 @@ def drawCardsDisplay():
         else:
             print(f"Imagen no encontrada: {card_name}")
 
-    # Dibujar las cartas de PLAYER3
+    # Draw PLAYER3 cards
     for i, card_name in enumerate(NAMECARD3):
         card_image = IMAGES.get(card_name)
         if card_image:
@@ -337,7 +350,7 @@ def drawCardsDisplay():
         else:
             print(f"Imagen no encontrada: {card_name}")
 
-    # Dibujar las cartas de HOUSE
+    # Draw HOUSE cards
     for i, card_name in enumerate(NAMECARDHOUSE):
         card_image = IMAGES.get(card_name)
         if card_image:

@@ -16,7 +16,8 @@
             [ ] - Anadir boton de split con su condicion
                 [ ] - Anadir boton de "RE-SPLIT" (No tan comun)
         [X] - Agregar boton para "STAND"
-            [ ] - Agregar la funcion y que pase de turno 
+            [X] - Agregar la funcion y que pase de turno 
+            [ ] - Hacer que pase al siguiente jugador
         [ ] - Agregar boton de "FOLD" 
     [ ] - Al finalizar la ronda, limpiar la mesa y volver a jugar
         [ ] - Agregar condicion de derrota si algun jugador se queda sin dinero
