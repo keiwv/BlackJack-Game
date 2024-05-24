@@ -164,7 +164,7 @@ def on_mouse_down(pos):
         GAME_STATE_PLAYER1 = 5
         return GAME_STATE_PLAYER1
     if button_x + 308 <= pos[0] <= button_x + 308 + button_width and button_y + 14 <= pos[1] <= button_y + 14 + button_height:
-        moreCards(PLAYER2) #! FALTA AGREGAR QUE SE AGREGUEN LAS CARTAS AL PLAYER 2
+        moreCards(PLAYER2)
     elif button_x + 205 <= pos[0] <= button_x + 205 + button_width and button_y + 14 <= pos[1] <= button_y + 14 + button_height:
         GAME_STATE_PLAYER2 = 5
         return GAME_STATE_PLAYER2
@@ -210,7 +210,7 @@ def moreCards(player):
                     GAME_STATE_PLAYER3 = 4
 
         i = len(player) - 1
-        if player[i] == 10:  # ! CORREGIR ESTO, NO SIEMPRE ES NAMECARD1
+        if player[i] == 10: 
             if(player == PLAYER1):
                 NAMECARD1.append(random.choice(["Jota", "Reina", "Rey"]) + "_de_" + random.choice(
                     ["Corazones", "Diamantes", "Espadas", "Tréboles"]))
