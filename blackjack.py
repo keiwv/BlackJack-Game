@@ -179,7 +179,7 @@ def lose(player):
 
 
 def moreCards(player):
-    global GAME_STATE_PLAYER1
+    global GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3, PLAYER1, PLAYER2, PLAYER3
     numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
     if sum(player) < 21:
         player.append((random.choice(numbers)))
@@ -194,19 +194,51 @@ def moreCards(player):
                 player.remove(11)
                 player.append(1)
             else:
-                GAME_STATE_PLAYER1 = 0
+                if(player == PLAYER1):
+                    GAME_STATE_PLAYER1 = 0
+                elif (player == PLAYER2):
+                    GAME_STATE_PLAYER2 = 0
+                elif (player == PLAYER3):
+                    GAME_STATE_PLAYER3 = 0
+        
         if sum(player) == 21:
-            GAME_STATE_PLAYER1 = 4  # ! CORREGIR ESTO, NO SIEMPRE ES PLAYER 1
+            if(player == PLAYER1):
+                    GAME_STATE_PLAYER1 = 4
+            elif (player == PLAYER2):
+                    GAME_STATE_PLAYER2 = 4
+            elif (player == PLAYER3):
+                    GAME_STATE_PLAYER3 = 4
 
         i = len(player) - 1
         if player[i] == 10:  # ! CORREGIR ESTO, NO SIEMPRE ES NAMECARD1
-            NAMECARD1.append(random.choice(["Jota", "Reina", "Rey"]) + "_de_" + random.choice(
-                ["Corazones", "Diamantes", "Espadas", "Tréboles"]))
+            if(player == PLAYER1):
+                NAMECARD1.append(random.choice(["Jota", "Reina", "Rey"]) + "_de_" + random.choice(
+                    ["Corazones", "Diamantes", "Espadas", "Tréboles"]))
+            elif (player == PLAYER2):
+                NAMECARD2.append(random.choice(["Jota", "Reina", "Rey"]) + "_de_" + random.choice(
+                    ["Corazones", "Diamantes", "Espadas", "Tréboles"]))
+            elif (player == PLAYER3):
+                NAMECARD3.append(random.choice(["Jota", "Reina", "Rey"]) + "_de_" + random.choice(
+                    ["Corazones", "Diamantes", "Espadas", "Tréboles"]))
         elif player[i] == 11 or player[i] == 1:
-            NAMECARD1.append(
+            if(player == PLAYER1):
+                NAMECARD1.append(
+                "As_de_" + random.choice(["Corazones", "Diamantes", "Espadas", "Tréboles"]))
+            elif (player == PLAYER2):
+                NAMECARD2.append(
+                "As_de_" + random.choice(["Corazones", "Diamantes", "Espadas", "Tréboles"]))
+            elif (player == PLAYER3):
+                NAMECARD3.append(
                 "As_de_" + random.choice(["Corazones", "Diamantes", "Espadas", "Tréboles"]))
         else:
-            NAMECARD1.append(str(player[i]) + "_de_" + random.choice(
+            if(player == PLAYER1):
+                NAMECARD1.append(str(player[i]) + "_de_" + random.choice(
+                ["Corazones", "Diamantes", "Espadas", "Tréboles"]))
+            elif (player == PLAYER2):
+                NAMECARD2.append(str(player[i]) + "_de_" + random.choice(
+                ["Corazones", "Diamantes", "Espadas", "Tréboles"]))
+            elif (player == PLAYER3):
+                NAMECARD3.append(str(player[i]) + "_de_" + random.choice(
                 ["Corazones", "Diamantes", "Espadas", "Tréboles"]))
 
 
