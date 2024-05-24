@@ -94,10 +94,14 @@ def update():
         GAME_STATE_PLAYER2 = 0
     if lose(PLAYER3):
         GAME_STATE_PLAYER3 = 0
-    if passTurn():
+    if passTurnP1():
         GAME_STATE_PLAYER1 = 5
+    if passTurnP2():
+        GAME_STATE_PLAYER2 = 5
     if blackjack(PLAYER1):
         GAME_STATE_PLAYER1 = 4
+    if blackjack(PLAYER2):
+        GAME_STATE_PLAYER2 = 4
 
 
 def draw():
@@ -132,7 +136,6 @@ def drawButtonsP1():
     screen.draw.text("HIT", (button_x + 23, button_y + 10),
                      fontsize=30, color="black")
 
-    drawCardsDisplay()
     screen.draw.filled_rect(
         Rect((button_x - 110, button_y), (button_width, button_height)), button_color_stand)
     screen.draw.text("STAND", (button_x - 105, button_y + 10),
@@ -160,6 +163,11 @@ def on_mouse_down(pos):
     elif button_x - 110 <= pos[0] <= button_x - 110 + button_width and button_y <= pos[1] <= button_y + button_height:
         GAME_STATE_PLAYER1 = 5
         return GAME_STATE_PLAYER1
+    if button_x + 308 <= pos[0] <= button_x + 308 + button_width and button_y + 14 <= pos[1] <= button_y + 14 + button_height:
+        moreCards(PLAYER2) #! FALTA AGREGAR QUE SE AGREGUEN LAS CARTAS AL PLAYER 2
+    elif button_x + 205 <= pos[0] <= button_x + 205 + button_width and button_y + 14 <= pos[1] <= button_y + 14 + button_height:
+        GAME_STATE_PLAYER2 = 5
+        return GAME_STATE_PLAYER2
 
 # Function to check if a player loses
 
@@ -202,8 +210,11 @@ def moreCards(player):
                 ["Corazones", "Diamantes", "Espadas", "Tréboles"]))
 
 
-def passTurn():
+def passTurnP1():
     return GAME_STATE_PLAYER1 == 5
+
+def passTurnP2():
+    return GAME_STATE_PLAYER2 == 5
 
 def blackjack(player):
     return sum(player) == 21
