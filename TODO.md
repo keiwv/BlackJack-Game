@@ -1,6 +1,6 @@
 1. Hacer la logica del juego
     [X] - El juego reparte 2 cartas a cada jugador incluida la casa
-        [ ] - Validar si te toca Blackjack en la primera jugada
+        [X] - Validar si te toca Blackjack en la primera jugada
             [ ] - Pagar apuesta 3:2 (1.5x)
     [ ] - El juego es capaz de notar cuando la casa gana y automaticamente termina la ronda
     [X] - El juego puede dejar pedir otra carta 
@@ -18,7 +18,6 @@
         [X] - Agregar boton para "STAND"
             [X] - Agregar la funcion y que pase de turno 
             [X] - Hacer que pase al siguiente jugador
-        [ ] - Agregar boton de "FOLD" 
     [ ] - Al finalizar la ronda, limpiar la mesa y volver a jugar
         [ ] - Agregar condicion de derrota si algun jugador se queda sin dinero
         [ ] - Agregar posibilidad de retirarse
