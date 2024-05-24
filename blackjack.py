@@ -27,7 +27,7 @@ NAMECARD3 = []
 NAMECARDHOUSE = []
 
 
-# 1 = Playing, 0 = House wins, 3 = House wins with 21 or in the first play, 4 = Player wins, 5 = end turn
+# 1 = Playing, 0 = House wins, 3 = House wins with 21 or in the first play, 4 = Player-House wins, 5 = end turn, 6 = insurance
 GAME_STATE_HOUSE = 1
 GAME_STATE_PLAYER1 = 1
 GAME_STATE_PLAYER2 = 1
@@ -113,9 +113,15 @@ def draw():
     screen.blit(resized_image_surface2, PLAYER2_IMAGE_POS)
     screen.blit(resized_image_surface3, PLAYER3_IMAGE_POS)
     drawCardsDisplay()
+
+    if GAME_STATE_HOUSE == 3:
+        screen.draw.text("BLACKJACK", (470, 100),
+                         fontsize=50, color="yellow", shadow=(1, 1))
+
+
+
     if GAME_STATE_PLAYER1 == 1:
         drawButtonsP1()
-    
     if GAME_STATE_PLAYER1 == 0:
         screen.draw.text("LOSE", (295, 500),
                          fontsize=50, color="red", shadow=(1, 1))
@@ -149,6 +155,41 @@ def draw():
     if GAME_STATE_PLAYER3 == 4:
         screen.draw.text("BLACKJACK", (945, 500),
                          fontsize=50, color="yellow", shadow=(1, 1))
+
+    #! TODAVIA NO ME DICE QUIEN GANA
+    if GAME_STATE_HOUSE == 4:
+        #Player 1 state
+        if( sum(PLAYER1) > sum(HOUSE) and sum(PLAYER1) < 22):
+            screen.draw.text("WIN", (470, 100),
+                            fontsize=50, color="green", shadow=(1, 1))
+        elif(sum(PLAYER1) == sum(HOUSE)):
+            screen.draw.text("PUSH", (470, 100),
+                            fontsize=50, color="yellow", shadow=(1, 1))
+        else:
+            screen.draw.text("LOSE", (470, 100),
+                            fontsize=50, color="red", shadow=(1, 1))
+        # Player 2 state
+        if( sum(PLAYER2) > sum(HOUSE) and sum(PLAYER2) < 22):
+            screen.draw.text("WIN", (470, 100),
+                            fontsize=50, color="green", shadow=(1, 1))
+        elif(sum(PLAYER2) == sum(HOUSE)):
+            screen.draw.text("PUSH", (470, 100),
+                            fontsize=50, color="yellow", shadow=(1, 1))
+        else:
+            screen.draw.text("LOSE", (470, 100),
+                            fontsize=50, color="red", shadow=(1, 1))
+
+        # Player 3 state
+        if( sum(PLAYER3) > sum(HOUSE) and sum(PLAYER3) < 22):
+            screen.draw.text("WIN", (470, 100),
+                            fontsize=50, color="green", shadow=(1, 1))
+        elif(sum(PLAYER3) == sum(HOUSE)):
+            screen.draw.text("PUSH", (470, 100),
+                            fontsize=50, color="yellow", shadow=(1, 1))
+        else:
+            screen.draw.text("LOSE", (470, 100),
+                            fontsize=50, color="red", shadow=(1, 1))      
+
 
 
 def drawButtonsP1():
@@ -332,7 +373,7 @@ def logic():
         if sum(HOUSE) > 21 and HOUSE.count(11) < 2:
             GAME_STATE_HOUSE = 0
         if sum(HOUSE) > 16 and sum(HOUSE) < 22:
-            GAME_STATE_HOUSE = 0
+            GAME_STATE_HOUSE = 4
 
     drawCards()
 
