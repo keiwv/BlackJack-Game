@@ -102,12 +102,31 @@ def update():
 
 def draw():
     global GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3
+    
     screen.clear()
     screen.blit('blackjack_fondo', (0, 0))
     screen.blit(resized_image_surface1, PLAYER1_IMAGE_POS)
     screen.blit(resized_image_surface2, PLAYER2_IMAGE_POS)
     screen.blit(resized_image_surface3, PLAYER3_IMAGE_POS)
+    drawCardsDisplay()
+    if GAME_STATE_PLAYER1 == 1:
+        drawButtonsP1()
+    
+    if GAME_STATE_PLAYER1 == 0:
+        screen.draw.text("LOSE", (295, 500),
+                         fontsize=50, color="red", shadow=(1, 1))
+    if GAME_STATE_PLAYER1 == 5:
+        screen.draw.text("STAND", (295, 500), fontsize=50,
+                         color="red", shadow=(1, 1))
+    if GAME_STATE_PLAYER1 == 4:
+        screen.draw.text("BLACKJACK", (295, 500),
+                         fontsize=50, color="yellow", shadow=(1, 1))
+        
+    if GAME_STATE_PLAYER2 == 1 and (GAME_STATE_PLAYER1 == 5 or GAME_STATE_PLAYER1 == 0 or GAME_STATE_PLAYER1 == 4):
+        drawButtonsP2()
 
+
+def drawButtonsP1():
     screen.draw.filled_rect(
         Rect((button_x, button_y), (button_width, button_height)), button_color_hit)
     screen.draw.text("HIT", (button_x + 23, button_y + 10),
@@ -118,17 +137,17 @@ def draw():
         Rect((button_x - 110, button_y), (button_width, button_height)), button_color_stand)
     screen.draw.text("STAND", (button_x - 105, button_y + 10),
                      fontsize=30, color="black")
+    
+def drawButtonsP2():
+    screen.draw.filled_rect(
+        Rect((button_x + 308, button_y + 14), (button_width, button_height)), button_color_hit)
+    screen.draw.text("HIT", (button_x + 330, button_y + 23),
+                     fontsize=30, color="black")
 
-    if GAME_STATE_PLAYER1 == 0:
-        screen.draw.text("LOSE", (295, 500),
-                         fontsize=50, color="red", shadow=(1, 1))
-    if GAME_STATE_PLAYER1 == 5:
-        screen.draw.text("STAND", (295, 500), fontsize=50,
-                         color="red", shadow=(1, 1))
-    if GAME_STATE_PLAYER1 == 4:
-        screen.draw.text("BLACKJACK", (295, 500),
-                         fontsize=50, color="yellow", shadow=(1, 1))
-
+    screen.draw.filled_rect(
+        Rect((button_x + 205, button_y + 14), (button_width, button_height)), button_color_stand)
+    screen.draw.text("STAND", (button_x + 212, button_y + 23),
+                     fontsize=30, color="black")
 
 
 
