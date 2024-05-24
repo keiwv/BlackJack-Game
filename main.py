@@ -38,10 +38,11 @@ GAME_STATE_PLAYER3 = 1
 
 # Definir la posición y el tamaño del botón
 button_x = 350
-button_y = 580
-button_width = 100
-button_height = 70
-button_color = (0, 179, 252)  # Verde
+button_y = 605
+button_width = 80
+button_height = 35
+button_color_hit = (0, 179, 252)  # Verde
+button_color_stand = (255, 31, 44)  # Rojo
 
 # Cards size
 CARD_WIDTH = 75
@@ -104,24 +105,28 @@ def draw():
     screen.blit(resized_image_surface3, PLAYER3_IMAGE_POS)
 
     screen.draw.filled_rect(
-        Rect((button_x, button_y), (button_width, button_height)), button_color)
-    screen.draw.text("HIT", (button_x + 30, button_y + 25),
+        Rect((button_x, button_y), (button_width, button_height)), button_color_hit)
+    screen.draw.text("HIT", (button_x + 23, button_y + 10),
                      fontsize=30, color="black")
+
+    screen.draw.filled_rect(
+        Rect((button_x - 110, button_y), (button_width, button_height)), button_color_stand)
+    screen.draw.text("STAND", (button_x - 105, button_y + 10),
+                     fontsize=30, color="black")
+
     if (GAME_STATE_PLAYER1 == 0):
         screen.draw.text("Player 1 lose", (265, 500),
                          fontsize=50, color="red", shadow=(1, 1))
 
-    # imagen = IMAGES.get("2_de_Corazones")
-    # screen.blit(imagen, (0, 0))
-
     drawCardsDisplay()
-    #! LOGICA PARA CUANDO SE AGREGUE UN BOTON DE DAR OTRA CARTA
 
 
 def on_mouse_down(pos):
     # Verificar si el clic fue dentro del área del botón
     if button_x <= pos[0] <= button_x + button_width and button_y <= pos[1] <= button_y + button_height:
         moreCards(PLAYER1)
+    elif button_x - 110 <= pos[0] <= button_x - 110 + button_width and button_y <= pos[1] <= button_y + button_height:
+        passTurn(PLAYER1)
 
 # Funtion to know if a player lose
 
@@ -165,6 +170,11 @@ def moreCards(player):
         else:
             NAMECARD1.append(str(player[i]) + "_de_" + random.choice(
                 ["Corazones", "Diamantes", "Espadas", "Tréboles"]))
+
+
+def passTurn(player):
+    print("Pass turn")
+    screen.draw.text("STAND", (265, 500))
 
 # Logic of the game
 
