@@ -128,6 +128,27 @@ def draw():
         
     if GAME_STATE_PLAYER2 == 1 and (GAME_STATE_PLAYER1 == 5 or GAME_STATE_PLAYER1 == 0 or GAME_STATE_PLAYER1 == 4):
         drawButtonsP2()
+    if GAME_STATE_PLAYER2 == 0:
+        screen.draw.text("LOSE", (620, 500),
+                         fontsize=50, color="red", shadow=(1, 1))
+    if GAME_STATE_PLAYER2 == 5:
+        screen.draw.text("STAND", (620, 500), fontsize=50,
+                         color="red", shadow=(1, 1))
+    if GAME_STATE_PLAYER2 == 4:
+        screen.draw.text("BLACKJACK", (620, 500),
+                         fontsize=50, color="yellow", shadow=(1, 1))
+    
+    if GAME_STATE_PLAYER3 == 1 and (GAME_STATE_PLAYER2 == 5 or GAME_STATE_PLAYER2 == 0 or GAME_STATE_PLAYER2 == 4):
+        drawButtonsP3()
+    if GAME_STATE_PLAYER3 == 0:
+        screen.draw.text("LOSE", (945, 500),
+                         fontsize=50, color="red", shadow=(1, 1))
+    if GAME_STATE_PLAYER3 == 5:
+        screen.draw.text("STAND", (945, 500), fontsize=50,
+                         color="red", shadow=(1, 1))
+    if GAME_STATE_PLAYER3 == 4:
+        screen.draw.text("BLACKJACK", (945, 500),
+                         fontsize=50, color="yellow", shadow=(1, 1))
 
 
 def drawButtonsP1():
@@ -152,11 +173,21 @@ def drawButtonsP2():
     screen.draw.text("STAND", (button_x + 212, button_y + 23),
                      fontsize=30, color="black")
 
+def drawButtonsP3():
+    screen.draw.filled_rect(
+        Rect((button_x + 615, button_y), (button_width, button_height)), button_color_hit)
+    screen.draw.text("HIT", (button_x + 640, button_y + 10),
+                     fontsize=30, color="black")
+
+    screen.draw.filled_rect(
+        Rect((button_x + 514, button_y), (button_width, button_height)), button_color_stand)
+    screen.draw.text("STAND", (button_x + 520, button_y + 10),
+                     fontsize=30, color="black")
 
 
 # Function to know if the mouse is clicked
 def on_mouse_down(pos):
-    global GAME_STATE_PLAYER1
+    global GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3
     # Check if the click was within the button area
     if button_x <= pos[0] <= button_x + button_width and button_y <= pos[1] <= button_y + button_height:
         moreCards(PLAYER1)
@@ -168,6 +199,11 @@ def on_mouse_down(pos):
     elif button_x + 205 <= pos[0] <= button_x + 205 + button_width and button_y + 14 <= pos[1] <= button_y + 14 + button_height:
         GAME_STATE_PLAYER2 = 5
         return GAME_STATE_PLAYER2
+    if button_x + 615 <= pos[0] <= button_x + 615 + button_width and button_y <= pos[1] <= button_y + button_height:
+        moreCards(PLAYER3)
+    elif button_x + 514 <= pos[0] <= button_x + 514 + button_width and button_y <= pos[1] <= button_y + button_height:
+        GAME_STATE_PLAYER3 = 5
+        return GAME_STATE_PLAYER3
 
 # Function to check if a player loses
 
@@ -247,6 +283,9 @@ def passTurnP1():
 
 def passTurnP2():
     return GAME_STATE_PLAYER2 == 5
+
+def passTurnP3():
+    return GAME_STATE_PLAYER3 == 5
 
 def blackjack(player):
     return sum(player) == 21
