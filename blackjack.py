@@ -27,7 +27,7 @@ NAMECARD3 = []
 NAMECARDHOUSE = []
 
 
-# 1 = Playing, 0 = House wins, 3 = House wins with 21 or in the first play, 4 = Player-House wins, 5 = end turn, 6 = insurance
+# 1 = Playing, 0 = Player or House lose, 3 = House wins with 21 or in the first play, 4 = Player-House wins, 5 = end turn, 6 = insurance
 GAME_STATE_HOUSE = 1
 GAME_STATE_PLAYER1 = 1
 GAME_STATE_PLAYER2 = 1
@@ -112,10 +112,6 @@ def draw():
     screen.blit(resized_image_surface1, PLAYER1_IMAGE_POS)
     screen.blit(resized_image_surface2, PLAYER2_IMAGE_POS)
     screen.blit(resized_image_surface3, PLAYER3_IMAGE_POS)
-    HOUSE.clear()
-    HOUSE.append(11)
-    HOUSE.append(10)
-    GAME_STATE_HOUSE = 3
     drawCardsDisplay()
 
     if GAME_STATE_HOUSE == 3:
@@ -178,37 +174,37 @@ def draw():
 
         #! TODAVIA NO ME DICE QUIEN GANA
 
-        if GAME_STATE_HOUSE == 4:
+        if (GAME_STATE_HOUSE == 4 or GAME_STATE_HOUSE == 0) and (GAME_STATE_PLAYER3 == 0 or GAME_STATE_PLAYER3 == 5 or GAME_STATE_PLAYER3 == 4):
             # Player 1 state
-            if (sum(PLAYER1) > sum(HOUSE) and sum(PLAYER1) < 22):
-                screen.draw.text("WIN", (295, 500),
+            if ((sum(PLAYER1) > sum(HOUSE) and sum(PLAYER1) < 22) or sum(HOUSE) > 21):
+                screen.draw.text("WIN", (295, 400),
                                  fontsize=50, color="green", shadow=(1, 1))
             elif (sum(PLAYER1) == sum(HOUSE)):
-                screen.draw.text("PUSH", (295, 500),
+                screen.draw.text("PUSH", (295, 400),
                                  fontsize=50, color="yellow", shadow=(1, 1))
             else:
-                screen.draw.text("LOSE", (295, 500),
+                screen.draw.text("LOSE", (295, 400),
                                  fontsize=50, color="red", shadow=(1, 1))
             # Player 2 state
             if (sum(PLAYER2) > sum(HOUSE) and sum(PLAYER2) < 22):
-                screen.draw.text("WIN", (620, 500),
+                screen.draw.text("WIN", (620, 430),
                                  fontsize=50, color="green", shadow=(1, 1))
             elif (sum(PLAYER2) == sum(HOUSE)):
-                screen.draw.text("PUSH", (620, 500),
+                screen.draw.text("PUSH", (620, 430),
                                  fontsize=50, color="yellow", shadow=(1, 1))
             else:
-                screen.draw.text("LOSE", (620, 500),
+                screen.draw.text("LOSE", (620, 430),
                                  fontsize=50, color="red", shadow=(1, 1))
 
             # Player 3 state
             if (sum(PLAYER3) > sum(HOUSE) and sum(PLAYER3) < 22):
-                screen.draw.text("WIN", (945, 500),
+                screen.draw.text("WIN", (945, 400),
                                  fontsize=50, color="green", shadow=(1, 1))
             elif (sum(PLAYER3) == sum(HOUSE)):
-                screen.draw.text("PUSH", (945, 500),
+                screen.draw.text("PUSH", (945, 400),
                                  fontsize=50, color="yellow", shadow=(1, 1))
             else:
-                screen.draw.text("LOSE", (945, 500),
+                screen.draw.text("LOSE", (945, 400),
                                  fontsize=50, color="red", shadow=(1, 1))
 
 
@@ -389,6 +385,7 @@ def logic():
         # This is to control the cards taken by the house
         if firstPlay == 0 and sum(HOUSE) == 21:
             GAME_STATE_HOUSE = 3
+            firstPlay = 1
         if sum(HOUSE) < 17:
             HOUSE.append((random.choice(numbers)))
             # This is to change the value of the card 11 to 1. Only if the player or house has two 11 cards
