@@ -48,6 +48,10 @@ button_color_stand = (255, 31, 44)  # Red
 CARD_WIDTH = 75
 CARD_HEIGHT = 125
 
+# Reload button
+CENTER_C = (200, 200)
+RADIUS = 50
+
 # ------------------------------ IMAGES ------------------------------
 
 # Position of the players image
@@ -172,8 +176,6 @@ def draw():
             screen.draw.text("BLACKJACK", (945, 500),
                              fontsize=50, color="yellow", shadow=(1, 1))
 
-        #! TODAVIA NO ME DICE QUIEN GANA
-
         if (GAME_STATE_HOUSE == 4 or GAME_STATE_HOUSE == 0) and (GAME_STATE_PLAYER3 == 0 or GAME_STATE_PLAYER3 == 5 or GAME_STATE_PLAYER3 == 4):
             # Player 1 state
             if ((sum(PLAYER1) > sum(HOUSE) and sum(PLAYER1) < 22) or sum(HOUSE) > 21):
@@ -206,6 +208,7 @@ def draw():
             else:
                 screen.draw.text("LOSE", (945, 400),
                                  fontsize=50, color="red", shadow=(1, 1))
+            drawEndGameButtons()
 
 
 def drawButtonsP1():
@@ -244,6 +247,23 @@ def drawButtonsP3():
                      fontsize=30, color="black")
 
 
+def drawEndGameButtons():
+    # Dibujar círculo
+    screen.draw.filled_circle(CENTER, RADIUS, (0, 0, 255))  # Círculo azul
+    # Círculo blanco interno
+    screen.draw.filled_circle(CENTER, RADIUS - 5, (255, 255, 255))
+
+    # Dibujar flecha
+    arrow_radius = RADIUS - 15
+    start_angle = math.pi / 4  # 45 grados
+    end_angle = 2 * math.pi - math.pi / 4  # 315 grados
+    arrow_tip = (CENTER[0] + arrow_radius * math.cos(end_angle),
+                 CENTER[1] - arrow_radius * math.sin(end_angle))
+
+    screen.draw.line(CENTER, arrow_tip, (0, 0, 255))  # Línea azul
+    screen.draw.filled_circle(arrow_tip, 5, (0, 0, 255))  # Punta de la flecha
+
+
 # Function to know if the mouse is clicked
 def on_mouse_down(pos):
     global GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3
@@ -263,6 +283,9 @@ def on_mouse_down(pos):
     elif button_x + 514 <= pos[0] <= button_x + 514 + button_width and button_y <= pos[1] <= button_y + button_height:
         GAME_STATE_PLAYER3 = 5
         return GAME_STATE_PLAYER3
+
+    if (pos[0] - CENTER[0]) ** 2 + (pos[1] - CENTER[1]) ** 2 <= RADIUS ** 2:
+        print("Botón de recargar presionado")
 
 # Function to check if a player loses
 
