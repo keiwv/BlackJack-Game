@@ -11,10 +11,8 @@
         [X] - Validar que el usuario identifique el AS como 1 u 11
         [X] - Si al momento de repartir toca 2 AS (11) uno se cambia por 1 automaticamente
     [ ] - Agregar botones
-        [ ] - Agregar funcionalidades como el "DOUBLE", "SPLIT" 
+        [ ] - Agregar funcionalidades como el "DOUBLE"
             [ ] - Anadir boton de double con su condicion de uso
-            [ ] - Anadir boton de split con su condicion
-                [ ] - Anadir boton de "RE-SPLIT" (No tan comun)
         [X] - Agregar boton para "STAND"
             [X] - Agregar la funcion y que pase de turno 
             [X] - Hacer que pase al siguiente jugador
