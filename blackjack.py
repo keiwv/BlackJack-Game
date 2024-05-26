@@ -27,11 +27,20 @@ NAMECARD3 = []
 NAMECARDHOUSE = []
 
 
-# 1 = Playing, 0 = Player or House lose, 3 = House wins with 21 or in the first play, 4 = Player-House wins, 5 = end turn, 6 = insurance
+# 1 = Playing, 0 = Player or House lose, 3 = House wins with 21 or in the first play, 4 = Player-House wins, 5 = end turn, 6 = insurance, 7 = bet time, 8 = waiting
 GAME_STATE_HOUSE = 1
-GAME_STATE_PLAYER1 = 1
-GAME_STATE_PLAYER2 = 1
-GAME_STATE_PLAYER3 = 1
+GAME_STATE_PLAYER1 = 7
+GAME_STATE_PLAYER2 = 8
+GAME_STATE_PLAYER3 = 8
+
+
+# Money of the players
+MONEYP1 = 1000
+MONEYP2 = 1000
+MONEYP3 = 1000
+LASTBETP1 = 0
+LASTBETP2 = 0
+LASTBETP3 = 0
 
 
 # ------------------------------ BUTTONS ------------------------------
@@ -55,6 +64,10 @@ RADIUS = 50
 # ------------------------------ IMAGES ------------------------------
 
 RELOAD_BUTTON = Actor("reload", pos=(1180, 118))
+FICHA20 = Actor("ficha25.png", pos=(60, 200))
+FICHA50 = Actor("ficha50.png", pos=(60, 280))
+FICHA100 = Actor("ficha100.png", pos=(60, 360))
+FICHA500 = Actor("ficha500.png", pos=(60, 440))
 
 # Position of the players image
 PLAYER1_IMAGE_POS = (280, 635)
@@ -108,6 +121,8 @@ def update():
         GAME_STATE_PLAYER1 = 4
     if blackjack(PLAYER2):
         GAME_STATE_PLAYER2 = 4
+    if blackjack(PLAYER3):
+        GAME_STATE_PLAYER3 = 4
 
 
 def draw():
@@ -120,104 +135,131 @@ def draw():
     screen.blit(resized_image_surface3, PLAYER3_IMAGE_POS)
     RELOAD_BUTTON.draw()
 
-    drawCardsDisplay()
-
-    if GAME_STATE_HOUSE == 3:
-        if (NAMECARDHOUSE[0] == "As_de_Corazones" or NAMECARDHOUSE[0] == "As_de_Diamantes" or NAMECARDHOUSE[0] == "As_de_Espadas" or NAMECARDHOUSE[0] == "As_de_Tréboles"):
-            print("Insurance")  # ! FALTA AGREGAR CONDICIONES DEL INSURANCE
-        else:
-            drawCardsHouse()
-            screen.draw.text("BLACKJACK", (470, 100),
-                             fontsize=50, color="yellow", shadow=(1, 1))
-            if GAME_STATE_PLAYER1 == 4:
-                screen.draw.text("PUSH", (295, 500),
-                                 fontsize=50, color="yellow", shadow=(1, 1))
-            else:
-                screen.draw.text("LOSE", (295, 500),
-                                 fontsize=50, color="red", shadow=(1, 1))
-            if GAME_STATE_PLAYER2 == 4:
-                screen.draw.text("PUSH", (620, 500),
-                                 fontsize=50, color="yellow", shadow=(1, 1))
-            else:
-                screen.draw.text("LOSE", (620, 500),
-                                 fontsize=50, color="red", shadow=(1, 1))
-            if GAME_STATE_PLAYER3 == 4:
-                screen.draw.text("PUSH", (945, 500),
-                                 fontsize=50, color="yellow", shadow=(1, 1))
-            else:
-                screen.draw.text("LOSE", (945, 500),
-                                 fontsize=50, color="red", shadow=(1, 1))
+    if (GAME_STATE_PLAYER1 == 8 or GAME_STATE_PLAYER2 == 8 or GAME_STATE_PLAYER3 == 8) or (LASTBETP1 == 0 or LASTBETP2 == 0 or LASTBETP3 == 0):
+        if GAME_STATE_PLAYER1 == 7 and MONEYP1 != 0:
+            screen.draw.text("BET PLAYER 1", (CENTER_X - 100, CENTER_Y - 50), fontsize=50,
+                             color="yellow", shadow=(1, 1))
+            FICHA20.draw()
+            FICHA50.draw()
+            FICHA100.draw()
+            FICHA500.draw()
+        if GAME_STATE_PLAYER2 == 7 and MONEYP2 != 0:
+            screen.draw.text("BET PLAYER 2", (CENTER_X - 100, CENTER_Y - 50), fontsize=50,
+                             color="yellow", shadow=(1, 1))
+            FICHA20.draw()
+            FICHA50.draw()
+            FICHA100.draw()
+            FICHA500.draw()
+        if GAME_STATE_PLAYER3 == 7 and MONEYP3 != 0:
+            screen.draw.text("BET PLAYER 3", (CENTER_X - 100, CENTER_Y - 50), fontsize=50,
+                             color="yellow", shadow=(1, 1))
+            FICHA20.draw()
+            FICHA50.draw()
+            FICHA100.draw()
+            FICHA500.draw()
     else:
-        if GAME_STATE_PLAYER1 == 1:
-            drawButtonsP1()
-        if GAME_STATE_PLAYER1 == 0:
-            screen.draw.text("LOSE", (295, 500),
-                             fontsize=50, color="red", shadow=(1, 1))
-        if GAME_STATE_PLAYER1 == 5:
-            screen.draw.text("STAND", (295, 500), fontsize=50,
-                             color="red", shadow=(1, 1))
-        if GAME_STATE_PLAYER1 == 4:
-            screen.draw.text("BLACKJACK", (295, 500),
-                             fontsize=50, color="yellow", shadow=(1, 1))
-
-        if GAME_STATE_PLAYER2 == 1 and (GAME_STATE_PLAYER1 == 5 or GAME_STATE_PLAYER1 == 0 or GAME_STATE_PLAYER1 == 4):
-            drawButtonsP2()
-        if GAME_STATE_PLAYER2 == 0:
-            screen.draw.text("LOSE", (620, 500),
-                             fontsize=50, color="red", shadow=(1, 1))
-        if GAME_STATE_PLAYER2 == 5:
-            screen.draw.text("STAND", (620, 500), fontsize=50,
-                             color="red", shadow=(1, 1))
-        if GAME_STATE_PLAYER2 == 4:
-            screen.draw.text("BLACKJACK", (620, 500),
-                             fontsize=50, color="yellow", shadow=(1, 1))
-
-        if GAME_STATE_PLAYER3 == 1 and (GAME_STATE_PLAYER2 == 5 or GAME_STATE_PLAYER2 == 0 or GAME_STATE_PLAYER2 == 4):
-            drawButtonsP3()
-        if GAME_STATE_PLAYER3 == 0:
-            screen.draw.text("LOSE", (945, 500),
-                             fontsize=50, color="red", shadow=(1, 1))
-        if GAME_STATE_PLAYER3 == 5:
-            screen.draw.text("STAND", (945, 500), fontsize=50,
-                             color="red", shadow=(1, 1))
-        if GAME_STATE_PLAYER3 == 4:
-            screen.draw.text("BLACKJACK", (945, 500),
-                             fontsize=50, color="yellow", shadow=(1, 1))
-
-        if (GAME_STATE_HOUSE == 4 or GAME_STATE_HOUSE == 0) and (GAME_STATE_PLAYER3 == 0 or GAME_STATE_PLAYER3 == 5 or GAME_STATE_PLAYER3 == 4):
-            drawCardsHouse()
-            # Player 1 state
-            if ((sum(PLAYER1) > sum(HOUSE) and sum(PLAYER1) < 22) or sum(HOUSE) > 21):
-                screen.draw.text("WIN", (295, 400),
-                                 fontsize=50, color="green", shadow=(1, 1))
-            elif (sum(PLAYER1) == sum(HOUSE)):
-                screen.draw.text("PUSH", (295, 400),
-                                 fontsize=50, color="yellow", shadow=(1, 1))
+        if GAME_STATE_HOUSE == 3:
+            drawCardsDisplay()
+            if (NAMECARDHOUSE[0] == "As_de_Corazones" or NAMECARDHOUSE[0] == "As_de_Diamantes" or NAMECARDHOUSE[0] == "As_de_Espadas" or NAMECARDHOUSE[0] == "As_de_Tréboles"):
+                print("Insurance")  # ! FALTA AGREGAR CONDICIONES DEL INSURANCE
             else:
-                screen.draw.text("LOSE", (295, 400),
-                                 fontsize=50, color="red", shadow=(1, 1))
-            # Player 2 state
-            if (sum(PLAYER2) > sum(HOUSE) and sum(PLAYER2) < 22) or sum(HOUSE) > 21:
-                screen.draw.text("WIN", (620, 430),
-                                 fontsize=50, color="green", shadow=(1, 1))
-            elif (sum(PLAYER2) == sum(HOUSE)):
-                screen.draw.text("PUSH", (620, 430),
+                drawCardsHouse()
+                screen.draw.text("BLACKJACK", (470, 100),
                                  fontsize=50, color="yellow", shadow=(1, 1))
+                if GAME_STATE_PLAYER1 == 4:
+                    screen.draw.text("PUSH", (295, 500),
+                                     fontsize=50, color="yellow", shadow=(1, 1))
+                else:
+                    screen.draw.text("LOSE", (295, 500),
+                                     fontsize=50, color="red", shadow=(1, 1))
+                if GAME_STATE_PLAYER2 == 4:
+                    screen.draw.text("PUSH", (620, 500),
+                                     fontsize=50, color="yellow", shadow=(1, 1))
+                else:
+                    screen.draw.text("LOSE", (620, 500),
+                                     fontsize=50, color="red", shadow=(1, 1))
+                if GAME_STATE_PLAYER3 == 4:
+                    screen.draw.text("PUSH", (945, 500),
+                                     fontsize=50, color="yellow", shadow=(1, 1))
+                else:
+                    screen.draw.text("LOSE", (945, 500),
+                                     fontsize=50, color="red", shadow=(1, 1))
+        else:
+            drawCardsDisplay()
+            if (NAMECARDHOUSE[0] == "As_de_Corazones" or NAMECARDHOUSE[0] == "As_de_Diamantes" or NAMECARDHOUSE[0] == "As_de_Espadas" or NAMECARDHOUSE[0] == "As_de_Tréboles"):
+                print("Insurance")
             else:
-                screen.draw.text("LOSE", (620, 430),
-                                 fontsize=50, color="red", shadow=(1, 1))
 
-            # Player 3 state
-            if (sum(PLAYER3) > sum(HOUSE) and sum(PLAYER3) < 22) or sum(HOUSE) > 21:
-                screen.draw.text("WIN", (945, 400),
-                                 fontsize=50, color="green", shadow=(1, 1))
-            elif (sum(PLAYER3) == sum(HOUSE)):
-                screen.draw.text("PUSH", (945, 400),
-                                 fontsize=50, color="yellow", shadow=(1, 1))
-            else:
-                screen.draw.text("LOSE", (945, 400),
-                                 fontsize=50, color="red", shadow=(1, 1))
-            RELOAD_BUTTON.draw()
+                if GAME_STATE_PLAYER1 == 1:
+                    drawButtonsP1()
+                if GAME_STATE_PLAYER1 == 0:
+                    screen.draw.text("LOSE", (295, 500),
+                                     fontsize=50, color="red", shadow=(1, 1))
+                if GAME_STATE_PLAYER1 == 5:
+                    screen.draw.text("STAND", (295, 500), fontsize=50,
+                                     color="red", shadow=(1, 1))
+                if GAME_STATE_PLAYER1 == 4:
+                    screen.draw.text("BLACKJACK", (295, 500),
+                                     fontsize=50, color="yellow", shadow=(1, 1))
+
+                if GAME_STATE_PLAYER2 == 1 and (GAME_STATE_PLAYER1 == 5 or GAME_STATE_PLAYER1 == 0 or GAME_STATE_PLAYER1 == 4):
+                    drawButtonsP2()
+                if GAME_STATE_PLAYER2 == 0:
+                    screen.draw.text("LOSE", (620, 500),
+                                     fontsize=50, color="red", shadow=(1, 1))
+                if GAME_STATE_PLAYER2 == 5:
+                    screen.draw.text("STAND", (620, 500), fontsize=50,
+                                     color="red", shadow=(1, 1))
+                if GAME_STATE_PLAYER2 == 4:
+                    screen.draw.text("BLACKJACK", (620, 500),
+                                     fontsize=50, color="yellow", shadow=(1, 1))
+
+                if GAME_STATE_PLAYER3 == 1 and (GAME_STATE_PLAYER2 == 5 or GAME_STATE_PLAYER2 == 0 or GAME_STATE_PLAYER2 == 4):
+                    drawButtonsP3()
+                if GAME_STATE_PLAYER3 == 0:
+                    screen.draw.text("LOSE", (945, 500),
+                                     fontsize=50, color="red", shadow=(1, 1))
+                if GAME_STATE_PLAYER3 == 5:
+                    screen.draw.text("STAND", (945, 500), fontsize=50,
+                                     color="red", shadow=(1, 1))
+                if GAME_STATE_PLAYER3 == 4:
+                    screen.draw.text("BLACKJACK", (945, 500),
+                                     fontsize=50, color="yellow", shadow=(1, 1))
+
+                if (GAME_STATE_HOUSE == 4 or GAME_STATE_HOUSE == 0) and (GAME_STATE_PLAYER3 == 0 or GAME_STATE_PLAYER3 == 5 or GAME_STATE_PLAYER3 == 4):
+                    drawCardsHouse()
+                    # Player 1 state
+                    if ((sum(PLAYER1) > sum(HOUSE) and sum(PLAYER1) < 22) or sum(HOUSE) > 21):
+                        screen.draw.text("WIN", (295, 400),
+                                         fontsize=50, color="green", shadow=(1, 1))
+                    elif (sum(PLAYER1) == sum(HOUSE)):
+                        screen.draw.text("PUSH", (295, 400),
+                                         fontsize=50, color="yellow", shadow=(1, 1))
+                    else:
+                        screen.draw.text("LOSE", (295, 400),
+                                         fontsize=50, color="red", shadow=(1, 1))
+                    # Player 2 state
+                    if (sum(PLAYER2) > sum(HOUSE) and sum(PLAYER2) < 22) or sum(HOUSE) > 21:
+                        screen.draw.text("WIN", (620, 430),
+                                         fontsize=50, color="green", shadow=(1, 1))
+                    elif (sum(PLAYER2) == sum(HOUSE)):
+                        screen.draw.text("PUSH", (620, 430),
+                                         fontsize=50, color="yellow", shadow=(1, 1))
+                    else:
+                        screen.draw.text("LOSE", (620, 430),
+                                         fontsize=50, color="red", shadow=(1, 1))
+
+                    # Player 3 state
+                    if (sum(PLAYER3) > sum(HOUSE) and sum(PLAYER3) < 22) or sum(HOUSE) > 21:
+                        screen.draw.text("WIN", (945, 400),
+                                         fontsize=50, color="green", shadow=(1, 1))
+                    elif (sum(PLAYER3) == sum(HOUSE)):
+                        screen.draw.text("PUSH", (945, 400),
+                                         fontsize=50, color="yellow", shadow=(1, 1))
+                    else:
+                        screen.draw.text("LOSE", (945, 400),
+                                         fontsize=50, color="red", shadow=(1, 1))
+                RELOAD_BUTTON.draw()
 
 
 def drawButtonsP1():
@@ -280,6 +322,59 @@ def on_mouse_down(pos):
     # Check if the click was within the reload button area
     if RELOAD_BUTTON.collidepoint(pos):
         restart()
+
+    if FICHA20.collidepoint(pos):
+        if GAME_STATE_PLAYER1 == 7:
+            if MONEYP1 >= 20:
+                bet(20)
+                return MONEYP1
+        if GAME_STATE_PLAYER2 == 7:
+            if MONEYP2 >= 20:
+                bet(20)
+                return MONEYP2
+        if GAME_STATE_PLAYER3 == 7:
+            if MONEYP3 >= 20:
+                bet(20)
+                return MONEYP3
+    if FICHA50.collidepoint(pos):
+        if GAME_STATE_PLAYER1 == 7:
+            if MONEYP1 >= 50:
+                bet(50)
+                return MONEYP1
+        if GAME_STATE_PLAYER2 == 7:
+            if MONEYP2 >= 50:
+                bet(50)
+                return MONEYP2
+        if GAME_STATE_PLAYER3 == 7:
+            if MONEYP3 >= 50:
+                bet(50)
+                return MONEYP3
+    if FICHA100.collidepoint(pos):
+        if GAME_STATE_PLAYER1 == 7:
+            if MONEYP1 >= 100:
+                bet(100)
+                return MONEYP1
+        if GAME_STATE_PLAYER2 == 7:
+            if MONEYP2 >= 100:
+                bet(100)
+                return MONEYP2
+        if GAME_STATE_PLAYER3 == 7:
+            if MONEYP3 >= 100:
+                bet(100)
+                return MONEYP3
+    if FICHA500.collidepoint(pos):
+        if GAME_STATE_PLAYER1 == 7:
+            if MONEYP1 >= 500:
+                bet(500)
+                return MONEYP1
+        if GAME_STATE_PLAYER2 == 7:
+            if MONEYP2 >= 500:
+                bet(500)
+                return MONEYP2
+        if GAME_STATE_PLAYER3 == 7:
+            if MONEYP3 >= 500:
+                bet(500)
+                return MONEYP3
 
 
 # Function to check if a player loses
@@ -369,6 +464,35 @@ def passTurnP3():
 
 def blackjack(player):
     return sum(player) == 21
+
+
+def bet(amount):
+    global MONEYP1, MONEYP2, MONEYP3, GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3, LASTBETP1, LASTBETP2, LASTBETP3
+    if GAME_STATE_PLAYER1 == 7:
+        MONEYP1 -= amount
+        GAME_STATE_PLAYER1 = 1
+        GAME_STATE_PLAYER2 = 7
+        LASTBETP1 = amount
+        print("Player 1 money: ", MONEYP1)
+        return MONEYP1, GAME_STATE_PLAYER1
+    elif GAME_STATE_PLAYER2 == 7:
+        MONEYP2 -= amount
+        GAME_STATE_PLAYER2 = 1
+        GAME_STATE_PLAYER3 = 7
+        LASTBETP2 = amount
+        print("Player 2 money: ", MONEYP2)
+        return MONEYP2, GAME_STATE_PLAYER2
+    elif GAME_STATE_PLAYER3 == 7:
+        MONEYP3 -= amount
+        GAME_STATE_PLAYER3 = 1
+        LASTBETP3 = amount
+        print("Player 3 money: ", MONEYP3)
+        return MONEYP3, GAME_STATE_PLAYER3
+
+
+#! AGREGAR LOGICA DE INSURANCE PERO PRIMERO LA APUESTA
+def insurance():
+    return GAME_STATE_HOUSE == 6
 
 # Game logic
 
@@ -569,7 +693,7 @@ def resizeCards(image):
 
 
 def restart():
-    global PLAYER1, PLAYER2, PLAYER3, HOUSE, NAMECARD1, NAMECARD2, NAMECARD3, NAMECARDHOUSE, GAME_STATE_HOUSE, GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3
+    global PLAYER1, PLAYER2, PLAYER3, HOUSE, NAMECARD1, NAMECARD2, NAMECARD3, NAMECARDHOUSE, GAME_STATE_HOUSE, GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3, LASTBETP1, LASTBETP2, LASTBETP3, MONEYP1, MONEYP2, MONEYP3
 
     PLAYER1 = []
     PLAYER2 = []
@@ -582,9 +706,13 @@ def restart():
     NAMECARDHOUSE = []
 
     GAME_STATE_HOUSE = 1
-    GAME_STATE_PLAYER1 = 1
-    GAME_STATE_PLAYER2 = 1
-    GAME_STATE_PLAYER3 = 1
+    GAME_STATE_PLAYER1 = 7
+    GAME_STATE_PLAYER2 = 8
+    GAME_STATE_PLAYER3 = 8
+
+    LASTBETP1 = 0
+    LASTBETP2 = 0
+    LASTBETP3 = 0
 
     logic()
 
