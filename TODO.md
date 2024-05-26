@@ -28,5 +28,5 @@
         [ ] - Agregar funcionalidad de "INSURANCE"
 
 3. Hacer las fichas de las apuestas
-    [ ] - Se debe poner de alguna manera controlar las apuestas
-        [ ] - Al ganar la apuesta un jugador, su ganancia es su apuesta duplicada
+    [X] - Se debe poner de alguna manera controlar las apuestas
+        [X] - Al ganar la apuesta un jugador, su ganancia es su apuesta duplicada

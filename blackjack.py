@@ -41,6 +41,9 @@ MONEYP3 = 1000
 LASTBETP1 = 0
 LASTBETP2 = 0
 LASTBETP3 = 0
+PAYP1 = 0
+PAYP2 = 0
+PAYP3 = 0
 
 
 # ------------------------------ BUTTONS ------------------------------
@@ -126,14 +129,21 @@ def update():
 
 
 def draw():
-    global GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3, NAMECARD1, NAMECARD2, NAMECARD3, NAMECARDHOUSE
+    global GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3, NAMECARD1, NAMECARD2, NAMECARD3, NAMECARDHOUSE, MONEYP1, MONEYP2, MONEYP3, PAYP1, PAYP2, PAYP3, LASTBETP1, LASTBETP2, LASTBETP3
 
     screen.clear()
     screen.blit('blackjack_fondo', (0, 0))
     screen.blit(resized_image_surface1, PLAYER1_IMAGE_POS)
     screen.blit(resized_image_surface2, PLAYER2_IMAGE_POS)
     screen.blit(resized_image_surface3, PLAYER3_IMAGE_POS)
-    RELOAD_BUTTON.draw()
+    RELOAD_BUTTON.draw()  # ! ESTE BOTON NO VA AQUI
+
+    screen.draw.text(f'{MONEYP1}', (390, 689), fontsize=30,
+                     color="yellow", shadow=(1, 1))
+    screen.draw.text(f'{MONEYP2}', (710, 700), fontsize=30,
+                     color="yellow", shadow=(1, 1))
+    screen.draw.text(f'{MONEYP3}', (1035, 665), fontsize=30,
+                     color="yellow", shadow=(1, 1))
 
     if (GAME_STATE_PLAYER1 == 8 or GAME_STATE_PLAYER2 == 8 or GAME_STATE_PLAYER3 == 8) or (LASTBETP1 == 0 or LASTBETP2 == 0 or LASTBETP3 == 0):
         if GAME_STATE_PLAYER1 == 7 and MONEYP1 != 0:
@@ -169,18 +179,27 @@ def draw():
                 if GAME_STATE_PLAYER1 == 4:
                     screen.draw.text("PUSH", (295, 500),
                                      fontsize=50, color="yellow", shadow=(1, 1))
+                    if PAYP1 == 0:
+                        MONEYP1 += LASTBETP1
+                    PAYP1 = 1
                 else:
                     screen.draw.text("LOSE", (295, 500),
                                      fontsize=50, color="red", shadow=(1, 1))
                 if GAME_STATE_PLAYER2 == 4:
                     screen.draw.text("PUSH", (620, 500),
                                      fontsize=50, color="yellow", shadow=(1, 1))
+                    if PAYP2 == 0:
+                        MONEYP2 += LASTBETP2
+                    PAYP2 = 1
                 else:
                     screen.draw.text("LOSE", (620, 500),
                                      fontsize=50, color="red", shadow=(1, 1))
                 if GAME_STATE_PLAYER3 == 4:
                     screen.draw.text("PUSH", (945, 500),
                                      fontsize=50, color="yellow", shadow=(1, 1))
+                    if PAYP3 == 0:
+                        MONEYP3 += LASTBETP3
+                    PAYP3 = 1
                 else:
                     screen.draw.text("LOSE", (945, 500),
                                      fontsize=50, color="red", shadow=(1, 1))
@@ -232,9 +251,17 @@ def draw():
                     if ((sum(PLAYER1) > sum(HOUSE) and sum(PLAYER1) < 22) or sum(HOUSE) > 21):
                         screen.draw.text("WIN", (295, 400),
                                          fontsize=50, color="green", shadow=(1, 1))
+                        if GAME_STATE_PLAYER1 == 4 and PAYP1 == 0:
+                            MONEYP1 += math.floor(LASTBETP1 * 2.5)
+                        elif PAYP1 == 0:
+                            MONEYP1 += LASTBETP1 * 2
+                        PAYP1 = 1
                     elif (sum(PLAYER1) == sum(HOUSE)):
                         screen.draw.text("PUSH", (295, 400),
                                          fontsize=50, color="yellow", shadow=(1, 1))
+                        if PAYP1 == 0:
+                            MONEYP1 += LASTBETP1
+                        PAYP1 = 1
                     else:
                         screen.draw.text("LOSE", (295, 400),
                                          fontsize=50, color="red", shadow=(1, 1))
@@ -242,9 +269,17 @@ def draw():
                     if (sum(PLAYER2) > sum(HOUSE) and sum(PLAYER2) < 22) or sum(HOUSE) > 21:
                         screen.draw.text("WIN", (620, 430),
                                          fontsize=50, color="green", shadow=(1, 1))
+                        if GAME_STATE_PLAYER2 == 4 and PAYP2 == 0:
+                            MONEYP2 += math.floor(LASTBETP2 * 2.5)
+                        elif PAYP2 == 0:
+                            MONEYP2 += LASTBETP2 * 2
+                        PAYP2 = 1
                     elif (sum(PLAYER2) == sum(HOUSE)):
                         screen.draw.text("PUSH", (620, 430),
                                          fontsize=50, color="yellow", shadow=(1, 1))
+                        if PAYP2 == 0:
+                            MONEYP2 += LASTBETP2
+                        PAYP2 = 1
                     else:
                         screen.draw.text("LOSE", (620, 430),
                                          fontsize=50, color="red", shadow=(1, 1))
@@ -253,9 +288,17 @@ def draw():
                     if (sum(PLAYER3) > sum(HOUSE) and sum(PLAYER3) < 22) or sum(HOUSE) > 21:
                         screen.draw.text("WIN", (945, 400),
                                          fontsize=50, color="green", shadow=(1, 1))
+                        if GAME_STATE_PLAYER3 == 4 and PAYP3 == 0:
+                            MONEYP3 += math.floor(LASTBETP3 * 2.5)
+                        elif PAYP3 == 0:
+                            MONEYP3 += LASTBETP3 * 2
+                        PAYP3 = 1
                     elif (sum(PLAYER3) == sum(HOUSE)):
                         screen.draw.text("PUSH", (945, 400),
                                          fontsize=50, color="yellow", shadow=(1, 1))
+                        if PAYP3 == 0:
+                            MONEYP3 += LASTBETP3
+                        PAYP3 = 1
                     else:
                         screen.draw.text("LOSE", (945, 400),
                                          fontsize=50, color="red", shadow=(1, 1))
@@ -694,7 +737,7 @@ def resizeCards(image):
 
 def restart():
     global PLAYER1, PLAYER2, PLAYER3, HOUSE, NAMECARD1, NAMECARD2, NAMECARD3, NAMECARDHOUSE, GAME_STATE_HOUSE, GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3, LASTBETP1, LASTBETP2, LASTBETP3, MONEYP1, MONEYP2, MONEYP3
-
+    global PAYP1, PAYP2, PAYP3
     PLAYER1 = []
     PLAYER2 = []
     PLAYER3 = []
@@ -713,6 +756,10 @@ def restart():
     LASTBETP1 = 0
     LASTBETP2 = 0
     LASTBETP3 = 0
+
+    PAYP1 = 0
+    PAYP2 = 0
+    PAYP3 = 0
 
     logic()
 
