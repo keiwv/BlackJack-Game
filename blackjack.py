@@ -54,6 +54,8 @@ RADIUS = 50
 
 # ------------------------------ IMAGES ------------------------------
 
+RELOAD_BUTTON = Actor("reload", pos=(1180, 118))
+
 # Position of the players image
 PLAYER1_IMAGE_POS = (280, 635)
 PLAYER2_IMAGE_POS = (602, 652)
@@ -116,6 +118,8 @@ def draw():
     screen.blit(resized_image_surface1, PLAYER1_IMAGE_POS)
     screen.blit(resized_image_surface2, PLAYER2_IMAGE_POS)
     screen.blit(resized_image_surface3, PLAYER3_IMAGE_POS)
+    RELOAD_BUTTON.draw()
+
     drawCardsDisplay()
 
     if GAME_STATE_HOUSE == 3:
@@ -208,7 +212,7 @@ def draw():
             else:
                 screen.draw.text("LOSE", (945, 400),
                                  fontsize=50, color="red", shadow=(1, 1))
-            drawEndGameButtons()
+            RELOAD_BUTTON.draw()
 
 
 def drawButtonsP1():
@@ -246,25 +250,9 @@ def drawButtonsP3():
     screen.draw.text("STAND", (button_x + 520, button_y + 10),
                      fontsize=30, color="black")
 
-
-def drawEndGameButtons():
-    # Dibujar círculo
-    screen.draw.filled_circle(CENTER, RADIUS, (0, 0, 255))  # Círculo azul
-    # Círculo blanco interno
-    screen.draw.filled_circle(CENTER, RADIUS - 5, (255, 255, 255))
-
-    # Dibujar flecha
-    arrow_radius = RADIUS - 15
-    start_angle = math.pi / 4  # 45 grados
-    end_angle = 2 * math.pi - math.pi / 4  # 315 grados
-    arrow_tip = (CENTER[0] + arrow_radius * math.cos(end_angle),
-                 CENTER[1] - arrow_radius * math.sin(end_angle))
-
-    screen.draw.line(CENTER, arrow_tip, (0, 0, 255))  # Línea azul
-    screen.draw.filled_circle(arrow_tip, 5, (0, 0, 255))  # Punta de la flecha
-
-
 # Function to know if the mouse is clicked
+
+
 def on_mouse_down(pos):
     global GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3
     # Check if the click was within the button area
@@ -284,8 +272,10 @@ def on_mouse_down(pos):
         GAME_STATE_PLAYER3 = 5
         return GAME_STATE_PLAYER3
 
-    if (pos[0] - CENTER[0]) ** 2 + (pos[1] - CENTER[1]) ** 2 <= RADIUS ** 2:
-        print("Botón de recargar presionado")
+    # Check if the click was within the reload button area
+    if RELOAD_BUTTON.collidepoint(pos):
+        restart()
+
 
 # Function to check if a player loses
 
@@ -555,6 +545,23 @@ def resizeCards(image):
 
 
 def restart():
+    global PLAYER1, PLAYER2, PLAYER3, HOUSE, NAMECARD1, NAMECARD2, NAMECARD3, NAMECARDHOUSE, GAME_STATE_HOUSE, GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3
+
+    PLAYER1 = []
+    PLAYER2 = []
+    PLAYER3 = []
+    HOUSE = []
+
+    NAMECARD1 = []
+    NAMECARD2 = []
+    NAMECARD3 = []
+    NAMECARDHOUSE = []
+
+    GAME_STATE_HOUSE = 1
+    GAME_STATE_PLAYER1 = 1
+    GAME_STATE_PLAYER2 = 1
+    GAME_STATE_PLAYER3 = 1
+
     logic()
 
 
