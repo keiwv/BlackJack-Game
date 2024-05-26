@@ -111,7 +111,7 @@ def update():
 
 
 def draw():
-    global GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3
+    global GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3, NAMECARD1, NAMECARD2, NAMECARD3, NAMECARDHOUSE
 
     screen.clear()
     screen.blit('blackjack_fondo', (0, 0))
@@ -123,26 +123,30 @@ def draw():
     drawCardsDisplay()
 
     if GAME_STATE_HOUSE == 3:
-        screen.draw.text("BLACKJACK", (470, 100),
-                         fontsize=50, color="yellow", shadow=(1, 1))
-        if GAME_STATE_PLAYER1 == 4:
-            screen.draw.text("PUSH", (295, 500),
-                             fontsize=50, color="yellow", shadow=(1, 1))
+        if (NAMECARDHOUSE[0] == "As_de_Corazones" or NAMECARDHOUSE[0] == "As_de_Diamantes" or NAMECARDHOUSE[0] == "As_de_Espadas" or NAMECARDHOUSE[0] == "As_de_Tréboles"):
+            print("Insurance")  # ! FALTA AGREGAR CONDICIONES DEL INSURANCE
         else:
-            screen.draw.text("LOSE", (295, 500),
-                             fontsize=50, color="red", shadow=(1, 1))
-        if GAME_STATE_PLAYER2 == 4:
-            screen.draw.text("PUSH", (620, 500),
+            drawCardsHouse()
+            screen.draw.text("BLACKJACK", (470, 100),
                              fontsize=50, color="yellow", shadow=(1, 1))
-        else:
-            screen.draw.text("LOSE", (620, 500),
-                             fontsize=50, color="red", shadow=(1, 1))
-        if GAME_STATE_PLAYER3 == 4:
-            screen.draw.text("PUSH", (945, 500),
-                             fontsize=50, color="yellow", shadow=(1, 1))
-        else:
-            screen.draw.text("LOSE", (945, 500),
-                             fontsize=50, color="red", shadow=(1, 1))
+            if GAME_STATE_PLAYER1 == 4:
+                screen.draw.text("PUSH", (295, 500),
+                                 fontsize=50, color="yellow", shadow=(1, 1))
+            else:
+                screen.draw.text("LOSE", (295, 500),
+                                 fontsize=50, color="red", shadow=(1, 1))
+            if GAME_STATE_PLAYER2 == 4:
+                screen.draw.text("PUSH", (620, 500),
+                                 fontsize=50, color="yellow", shadow=(1, 1))
+            else:
+                screen.draw.text("LOSE", (620, 500),
+                                 fontsize=50, color="red", shadow=(1, 1))
+            if GAME_STATE_PLAYER3 == 4:
+                screen.draw.text("PUSH", (945, 500),
+                                 fontsize=50, color="yellow", shadow=(1, 1))
+            else:
+                screen.draw.text("LOSE", (945, 500),
+                                 fontsize=50, color="red", shadow=(1, 1))
     else:
         if GAME_STATE_PLAYER1 == 1:
             drawButtonsP1()
@@ -181,6 +185,7 @@ def draw():
                              fontsize=50, color="yellow", shadow=(1, 1))
 
         if (GAME_STATE_HOUSE == 4 or GAME_STATE_HOUSE == 0) and (GAME_STATE_PLAYER3 == 0 or GAME_STATE_PLAYER3 == 5 or GAME_STATE_PLAYER3 == 4):
+            drawCardsHouse()
             # Player 1 state
             if ((sum(PLAYER1) > sum(HOUSE) and sum(PLAYER1) < 22) or sum(HOUSE) > 21):
                 screen.draw.text("WIN", (295, 400),
@@ -192,7 +197,7 @@ def draw():
                 screen.draw.text("LOSE", (295, 400),
                                  fontsize=50, color="red", shadow=(1, 1))
             # Player 2 state
-            if (sum(PLAYER2) > sum(HOUSE) and sum(PLAYER2) < 22):
+            if (sum(PLAYER2) > sum(HOUSE) and sum(PLAYER2) < 22) or sum(HOUSE) > 21:
                 screen.draw.text("WIN", (620, 430),
                                  fontsize=50, color="green", shadow=(1, 1))
             elif (sum(PLAYER2) == sum(HOUSE)):
@@ -203,7 +208,7 @@ def draw():
                                  fontsize=50, color="red", shadow=(1, 1))
 
             # Player 3 state
-            if (sum(PLAYER3) > sum(HOUSE) and sum(PLAYER3) < 22):
+            if (sum(PLAYER3) > sum(HOUSE) and sum(PLAYER3) < 22) or sum(HOUSE) > 21:
                 screen.draw.text("WIN", (945, 400),
                                  fontsize=50, color="green", shadow=(1, 1))
             elif (sum(PLAYER3) == sum(HOUSE)):
@@ -396,19 +401,23 @@ def logic():
 
     while GAME_STATE_HOUSE == 1:
         # This is to control the cards taken by the house
-        if firstPlay == 0 and sum(HOUSE) == 21:
-            GAME_STATE_HOUSE = 3
-            firstPlay = 1
         if sum(HOUSE) < 17:
+            firstPlay = 1
             HOUSE.append((random.choice(numbers)))
             # This is to change the value of the card 11 to 1. Only if the player or house has two 11 cards
             if HOUSE.count(11) == 2:
                 HOUSE.remove(11)
                 HOUSE.append(1)
-        if sum(HOUSE) > 21 and HOUSE.count(11) < 2:
+        if sum(HOUSE) > 21 and HOUSE.count(11) == 1:
+            HOUSE.remove(11)
+            HOUSE.append(1)
+        if sum(HOUSE) > 21 and HOUSE.count(11) == 0:
             GAME_STATE_HOUSE = 0
         if sum(HOUSE) > 16 and sum(HOUSE) < 22:
             GAME_STATE_HOUSE = 4
+        if firstPlay == 0 and sum(HOUSE) == 21:
+            GAME_STATE_HOUSE = 3
+            firstPlay = 1
 
     drawCards()
 
@@ -492,7 +501,7 @@ IMAGES = loadImages()
 
 
 def drawCardsDisplay():
-    global PLAYER1, PLAYER2, PLAYER3, HOUSE, NAMECARD1, NAMECARD2, NAMECARD3, NAMECARDHOUSE
+    global PLAYER1, PLAYER2, PLAYER3, HOUSE, NAMECARD1, NAMECARD2, NAMECARD3, NAMECARDHOUSE, BARAJA
 
     # Draw PLAYER1 cards
     for i, card_name in enumerate(NAMECARD1):
@@ -527,6 +536,20 @@ def drawCardsDisplay():
         else:
             print(f"Imagen no encontrada: {card_name}")
 
+    # Draw only 1 card
+    for i in range(1):
+        card_image = IMAGES.get(NAMECARDHOUSE[0])
+        baraja = IMAGES.get('baraja')
+        if (card_image):
+            card_image = resizeCards(card_image)
+            baraja = resizeCards(baraja)
+            card_pos = (470 + 1 * 80, 135)
+            screen.blit(card_image, card_pos)
+            screen.blit(baraja, (470 + 2 * 80, 135))
+
+
+def drawCardsHouse():
+    global HOUSE, NAMECARDHOUSE
     # Draw HOUSE cards
     for i, card_name in enumerate(NAMECARDHOUSE):
         card_image = IMAGES.get(card_name)
@@ -537,8 +560,9 @@ def drawCardsDisplay():
         else:
             print(f"Imagen no encontrada: {card_name}")
 
-
 # Function to resize the cards
+
+
 def resizeCards(image):
     resized_card = pygame.transform.scale(image, (CARD_WIDTH, CARD_HEIGHT))
     return resized_card
