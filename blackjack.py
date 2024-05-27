@@ -38,12 +38,18 @@ GAME_STATE_PLAYER3 = 8
 MONEYP1 = 1000
 MONEYP2 = 1000
 MONEYP3 = 1000
+
+# Last bet of the players
 LASTBETP1 = 0
 LASTBETP2 = 0
 LASTBETP3 = 0
+
+# Pay of the players
 PAYP1 = 0
 PAYP2 = 0
 PAYP3 = 0
+
+# Insurance bet
 INSURANCEBET = 0
 
 # ------------------------------ BUTTONS ------------------------------
@@ -127,6 +133,8 @@ def update():
     if blackjack(PLAYER3):
         GAME_STATE_PLAYER3 = 4
 
+# Main function to draw the game
+
 
 def draw():
     global GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3, NAMECARD1, NAMECARD2, NAMECARD3, NAMECARDHOUSE, MONEYP1, MONEYP2, MONEYP3, PAYP1, PAYP2, PAYP3, LASTBETP1, LASTBETP2, LASTBETP3, INSURANCEBET
@@ -136,7 +144,7 @@ def draw():
     screen.blit(resized_image_surface1, PLAYER1_IMAGE_POS)
     screen.blit(resized_image_surface2, PLAYER2_IMAGE_POS)
     screen.blit(resized_image_surface3, PLAYER3_IMAGE_POS)
-    RELOAD_BUTTON.draw()  # ! ESTE BOTON NO VA AQUI
+    RELOAD_BUTTON.draw()
 
     screen.draw.text(f'{MONEYP1}', (390, 689), fontsize=30,
                      color="yellow", shadow=(1, 1))
@@ -145,6 +153,7 @@ def draw():
     screen.draw.text(f'{MONEYP3}', (1035, 665), fontsize=30,
                      color="yellow", shadow=(1, 1))
 
+    # Bet time
     if (GAME_STATE_PLAYER1 == 8 or GAME_STATE_PLAYER2 == 8 or GAME_STATE_PLAYER3 == 8) or (LASTBETP1 == 0 or LASTBETP2 == 0 or LASTBETP3 == 0):
         if GAME_STATE_PLAYER1 == 7 and MONEYP1 != 0:
             screen.draw.text("BET PLAYER 1", (CENTER_X - 100, CENTER_Y - 50), fontsize=50,
@@ -180,10 +189,10 @@ def draw():
         elif LASTBETP3 == 0 and GAME_STATE_PLAYER3 != 8:
             GAME_STATE_PLAYER3 = 1
             LASTBETP3 = 2
-    else:
-        if GAME_STATE_HOUSE == 3:
+    else:  # Game time
+        if GAME_STATE_HOUSE == 3:  # House wins with 21 or in the first play
             drawCardsDisplay()
-            if (INSURANCEBET == 1):
+            if (INSURANCEBET == 1):  # Insurance bet
                 drawButtonInsuranceP1()
                 drawButtonInsuranceP2()
                 drawButtonInsuranceP3()
@@ -192,7 +201,7 @@ def draw():
                     GAME_STATE_PLAYER2 = 1
                     GAME_STATE_PLAYER3 = 1
                     INSURANCEBET = 0
-            else:
+            else:  # No insurance bet
                 drawCardsHouse()
                 screen.draw.text("BLACKJACK", (470, 100),
                                  fontsize=50, color="yellow", shadow=(1, 1))
@@ -226,7 +235,7 @@ def draw():
                     screen.draw.text("LOSE", (945, 500),
                                      fontsize=50, color="red", shadow=(1, 1))
                     poorPlayer()
-        else:
+        else:  # House doesn't win with 21 or in the first play
             drawCardsDisplay()
             if (INSURANCEBET == 1):
                 drawButtonInsuranceP1()
@@ -237,7 +246,7 @@ def draw():
                     GAME_STATE_PLAYER2 = 1
                     GAME_STATE_PLAYER3 = 1
                     INSURANCEBET = 0
-            else:
+            else:  # Each player calls for cards
                 if GAME_STATE_PLAYER1 != 9:
                     if GAME_STATE_PLAYER1 == 1:
                         drawButtonsP1()
@@ -251,7 +260,7 @@ def draw():
                         screen.draw.text("BLACKJACK", (295, 500),
                                          fontsize=50, color="yellow", shadow=(1, 1))
 
-                if (GAME_STATE_PLAYER2 == 1 and GAME_STATE_PLAYER2 != 9) and (GAME_STATE_PLAYER1 == 5 or GAME_STATE_PLAYER1 == 0 or GAME_STATE_PLAYER1 == 4 or GAME_STATE_PLAYER1 == 9):
+                if (GAME_STATE_PLAYER2 == 1 and GAME_STATE_PLAYER2 != 9) and (GAME_STATE_PLAYER1 == 5 or GAME_STATE_PLAYER1 == 0 or GAME_STATE_PLAYER1 == 4 or GAME_STATE_PLAYER1 == 9):  # When player 1 ends his turn
                     drawButtonsP2()
                 if GAME_STATE_PLAYER2 == 0:
                     screen.draw.text("LOSE", (620, 500),
@@ -275,7 +284,7 @@ def draw():
                     screen.draw.text("BLACKJACK", (945, 500),
                                      fontsize=50, color="yellow", shadow=(1, 1))
 
-                if (GAME_STATE_HOUSE == 4 or GAME_STATE_HOUSE == 0) and (GAME_STATE_PLAYER3 == 0 or GAME_STATE_PLAYER3 == 5 or GAME_STATE_PLAYER3 == 4 or GAME_STATE_PLAYER3 == 9):
+                if (GAME_STATE_HOUSE == 4 or GAME_STATE_HOUSE == 0) and (GAME_STATE_PLAYER3 == 0 or GAME_STATE_PLAYER3 == 5 or GAME_STATE_PLAYER3 == 4 or GAME_STATE_PLAYER3 == 9):  # The winners are decided
                     drawCardsHouse()
                     # Player 1 state
                     if ((sum(PLAYER1) > sum(HOUSE) and sum(PLAYER1) < 22) or sum(HOUSE) > 21):
@@ -338,6 +347,7 @@ def draw():
                 RELOAD_BUTTON.draw()
 
 
+# Draw buttons to take more cards, stand or double for any player
 def drawButtonsP1():
     screen.draw.filled_rect(
         Rect((button_x, button_y), (button_width, button_height)), button_color_hit)
@@ -389,6 +399,7 @@ def drawButtonsP3():
                      fontsize=30, color="black")
 
 
+# Draw buttons to insurance or no insurance for any player
 def drawButtonInsuranceP1():
     screen.draw.filled_rect(
         Rect((button_x - 75, button_y - 220), (button_width + 80, button_height)), button_color_hit)
@@ -430,12 +441,12 @@ def drawButtonInsuranceP3():
 def on_mouse_down(pos):
     global GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3, MONEYP1, MONEYP2, MONEYP3, INSURANCEBET, LASTBETP1, LASTBETP2, LASTBETP3
     # Check if the click was within the button area
-    if button_x <= pos[0] <= button_x + button_width and button_y <= pos[1] <= button_y + button_height:
+    if button_x <= pos[0] <= button_x + button_width and button_y <= pos[1] <= button_y + button_height:  # Hit button
         moreCards(PLAYER1)
-    elif button_x - 110 <= pos[0] <= button_x - 110 + button_width and button_y <= pos[1] <= button_y + button_height:
+    elif button_x - 110 <= pos[0] <= button_x - 110 + button_width and button_y <= pos[1] <= button_y + button_height:  # Stand button
         GAME_STATE_PLAYER1 = 5
         return GAME_STATE_PLAYER1
-    elif button_x + 110 <= pos[0] <= button_x + 110 + button_width and button_y <= pos[1] <= button_y + button_height:
+    elif button_x + 110 <= pos[0] <= button_x + 110 + button_width and button_y <= pos[1] <= button_y + button_height:  # Double button
         if LASTBETP1 != 0:
             GAME_STATE_PLAYER1 = 7
             bet(LASTBETP1)
@@ -443,12 +454,12 @@ def on_mouse_down(pos):
             GAME_STATE_PLAYER1 = 5
             GAME_STATE_PLAYER2 = 1
             return GAME_STATE_PLAYER1
-    if button_x + 308 <= pos[0] <= button_x + 308 + button_width and button_y + 14 <= pos[1] <= button_y + 14 + button_height:
+    if button_x + 308 <= pos[0] <= button_x + 308 + button_width and button_y + 14 <= pos[1] <= button_y + 14 + button_height:  # Hit button
         moreCards(PLAYER2)
-    elif button_x + 205 <= pos[0] <= button_x + 205 + button_width and button_y + 14 <= pos[1] <= button_y + 14 + button_height:
+    elif button_x + 205 <= pos[0] <= button_x + 205 + button_width and button_y + 14 <= pos[1] <= button_y + 14 + button_height:  # Stand button
         GAME_STATE_PLAYER2 = 5
         return GAME_STATE_PLAYER2
-    elif button_x + 415 <= pos[0] <= button_x + 415 + button_width and button_y + 14 <= pos[1] <= button_y + 14 + button_height:
+    elif button_x + 415 <= pos[0] <= button_x + 415 + button_width and button_y + 14 <= pos[1] <= button_y + 14 + button_height:  # Double button
         if LASTBETP2 != 0:
             GAME_STATE_PLAYER2 = 7
             bet(LASTBETP2)
@@ -456,12 +467,12 @@ def on_mouse_down(pos):
             GAME_STATE_PLAYER2 = 5
             GAME_STATE_PLAYER3 = 1
             return GAME_STATE_PLAYER2
-    if button_x + 615 <= pos[0] <= button_x + 615 + button_width and button_y <= pos[1] <= button_y + button_height:
+    if button_x + 615 <= pos[0] <= button_x + 615 + button_width and button_y <= pos[1] <= button_y + button_height:  # Hit button
         moreCards(PLAYER3)
-    elif button_x + 514 <= pos[0] <= button_x + 514 + button_width and button_y <= pos[1] <= button_y + button_height:
+    elif button_x + 514 <= pos[0] <= button_x + 514 + button_width and button_y <= pos[1] <= button_y + button_height:  # Stand button
         GAME_STATE_PLAYER3 = 5
         return GAME_STATE_PLAYER3
-    elif button_x + 715 <= pos[0] <= button_x + 715 + button_width and button_y <= pos[1] <= button_y + button_height:
+    elif button_x + 715 <= pos[0] <= button_x + 715 + button_width and button_y <= pos[1] <= button_y + button_height:  # Double button
         if LASTBETP3 != 0:
             GAME_STATE_PLAYER3 = 7
             bet(LASTBETP3)
@@ -473,6 +484,7 @@ def on_mouse_down(pos):
     if RELOAD_BUTTON.collidepoint(pos):
         restart()
 
+    # Check if the click was within the chip area
     if FICHA20.collidepoint(pos):
         if GAME_STATE_PLAYER1 == 7:
             if MONEYP1 >= 20:
@@ -526,7 +538,7 @@ def on_mouse_down(pos):
                 bet(500)
                 return MONEYP3
 
-    # Insurance button
+    # Insurance button for each player
     if button_x - 75 <= pos[0] <= button_x - 75 + button_width + 80:
         if button_y - 220 <= pos[1] <= button_y - 220 + button_height:
             handle_insurance(PLAYER1)
@@ -544,6 +556,8 @@ def on_mouse_down(pos):
             handle_insurance(PLAYER3)
         elif button_y - 180 <= pos[1] <= button_y - 180 + button_height:
             handle_no_insurance(PLAYER3)
+
+# Function to insurance or no insurance for each player
 
 
 def handle_insurance(player):
@@ -585,6 +599,8 @@ def handle_no_insurance(player):
         if GAME_STATE_HOUSE == 3:
             MONEYP3 -= LASTBETP3
         GAME_STATE_PLAYER3 = 6
+
+# Funtion to know if a player need to bet
 
 
 def poorPlayer():
@@ -671,6 +687,8 @@ def moreCards(player):
                 NAMECARD3.append(str(player[i]) + "_de_" + random.choice(
                     ["Corazones", "Diamantes", "Espadas", "Tréboles"]))
 
+# Funtions to pass the turn of each player
+
 
 def passTurnP1():
     return GAME_STATE_PLAYER1 == 5
@@ -683,9 +701,13 @@ def passTurnP2():
 def passTurnP3():
     return GAME_STATE_PLAYER3 == 5
 
+# Funtion to know if a player has blackjack
+
 
 def blackjack(player):
     return sum(player) == 21
+
+# Funtion to bet for each player
 
 
 def bet(amount):
@@ -710,8 +732,6 @@ def bet(amount):
 
 
 # Game logic
-
-
 def logic():
     global GAME_STATE_HOUSE, GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3, PLAYER1, PLAYER2, PLAYER3, HOUSE, INSURANCEBET
     numbers = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
@@ -762,11 +782,7 @@ def logic():
 
     drawCards()
 
-    #! This is for debugging
-    print("Cards player 1 ", PLAYER1)
-    print("Cards player 2 ", PLAYER2)
-    print("Cards player 3 ", PLAYER3)
-    print("Cards house ", HOUSE)
+# ------------------------------ LOAD CARD IMAGES AND DRAW IT ------------------------------
 
 # Function to draw the cards with the images and random figures
 
@@ -822,9 +838,6 @@ def drawCards():
             NAMECARDHOUSE.append(str(HOUSE[i]) + "_de_" + random.choice(
                 ["Corazones", "Diamantes", "Espadas", "Tréboles"]))
 
-
-# ------------------------------ LOAD CARD IMAGES AND DRAW IT ------------------------------
-
 # Function to load the images
 
 
@@ -838,6 +851,8 @@ def loadImages():
 
 
 IMAGES = loadImages()
+
+# Funtion to draw the cards
 
 
 def drawCardsDisplay():
@@ -887,6 +902,8 @@ def drawCardsDisplay():
             screen.blit(card_image, card_pos)
             screen.blit(baraja, (470 + 2 * 80, 135))
 
+# Function to draw the cards of the house
+
 
 def drawCardsHouse():
     global HOUSE, NAMECARDHOUSE
@@ -906,6 +923,8 @@ def drawCardsHouse():
 def resizeCards(image):
     resized_card = pygame.transform.scale(image, (CARD_WIDTH, CARD_HEIGHT))
     return resized_card
+
+# Funtion to restart the game
 
 
 def restart():
