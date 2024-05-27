@@ -246,7 +246,7 @@ def draw():
                                          fontsize=50, color="red", shadow=(1, 1))
                     if GAME_STATE_PLAYER1 == 5:
                         screen.draw.text("STAND", (295, 500), fontsize=50,
-                                         color="red", shadow=(1, 1))
+                                         color="blue", shadow=(1, 1))
                     if GAME_STATE_PLAYER1 == 4:
                         screen.draw.text("BLACKJACK", (295, 500),
                                          fontsize=50, color="yellow", shadow=(1, 1))
@@ -258,7 +258,7 @@ def draw():
                                      fontsize=50, color="red", shadow=(1, 1))
                 if GAME_STATE_PLAYER2 == 5:
                     screen.draw.text("STAND", (620, 500), fontsize=50,
-                                     color="red", shadow=(1, 1))
+                                     color="blue", shadow=(1, 1))
                 if GAME_STATE_PLAYER2 == 4:
                     screen.draw.text("BLACKJACK", (620, 500),
                                      fontsize=50, color="yellow", shadow=(1, 1))
@@ -270,7 +270,7 @@ def draw():
                                      fontsize=50, color="red", shadow=(1, 1))
                 if GAME_STATE_PLAYER3 == 5:
                     screen.draw.text("STAND", (945, 500), fontsize=50,
-                                     color="red", shadow=(1, 1))
+                                     color="blue", shadow=(1, 1))
                 if GAME_STATE_PLAYER3 == 4:
                     screen.draw.text("BLACKJACK", (945, 500),
                                      fontsize=50, color="yellow", shadow=(1, 1))
@@ -349,6 +349,11 @@ def drawButtonsP1():
     screen.draw.text("STAND", (button_x - 105, button_y + 10),
                      fontsize=30, color="black")
 
+    screen.draw.filled_rect(Rect((button_x + 110, button_y),
+                                 (button_width + 17, button_height)), (255, 255, 0))
+    screen.draw.text("DOUBLE", (button_x + 115, button_y + 10),
+                     fontsize=30, color="black")
+
 
 def drawButtonsP2():
     screen.draw.filled_rect(
@@ -361,6 +366,11 @@ def drawButtonsP2():
     screen.draw.text("STAND", (button_x + 212, button_y + 23),
                      fontsize=30, color="black")
 
+    screen.draw.filled_rect(Rect((button_x + 415, button_y + 14),
+                                 (button_width + 17, button_height)), (255, 255, 0))
+    screen.draw.text("DOUBLE", (button_x + 420, button_y + 23),
+                     fontsize=30, color="black")
+
 
 def drawButtonsP3():
     screen.draw.filled_rect(
@@ -371,6 +381,11 @@ def drawButtonsP3():
     screen.draw.filled_rect(
         Rect((button_x + 514, button_y), (button_width, button_height)), button_color_stand)
     screen.draw.text("STAND", (button_x + 520, button_y + 10),
+                     fontsize=30, color="black")
+
+    screen.draw.filled_rect(Rect((button_x + 715, button_y),
+                                 (button_width + 17, button_height)), (255, 255, 0))
+    screen.draw.text("DOUBLE", (button_x + 720, button_y + 10),
                      fontsize=30, color="black")
 
 
@@ -413,23 +428,46 @@ def drawButtonInsuranceP3():
 
 
 def on_mouse_down(pos):
-    global GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3
+    global GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3, MONEYP1, MONEYP2, MONEYP3, INSURANCEBET, LASTBETP1, LASTBETP2, LASTBETP3
     # Check if the click was within the button area
     if button_x <= pos[0] <= button_x + button_width and button_y <= pos[1] <= button_y + button_height:
         moreCards(PLAYER1)
     elif button_x - 110 <= pos[0] <= button_x - 110 + button_width and button_y <= pos[1] <= button_y + button_height:
         GAME_STATE_PLAYER1 = 5
         return GAME_STATE_PLAYER1
+    elif button_x + 110 <= pos[0] <= button_x + 110 + button_width and button_y <= pos[1] <= button_y + button_height:
+        if LASTBETP1 != 0:
+            GAME_STATE_PLAYER1 = 7
+            bet(LASTBETP1)
+            moreCards(PLAYER1)
+            GAME_STATE_PLAYER1 = 5
+            GAME_STATE_PLAYER2 = 1
+            return GAME_STATE_PLAYER1
     if button_x + 308 <= pos[0] <= button_x + 308 + button_width and button_y + 14 <= pos[1] <= button_y + 14 + button_height:
         moreCards(PLAYER2)
     elif button_x + 205 <= pos[0] <= button_x + 205 + button_width and button_y + 14 <= pos[1] <= button_y + 14 + button_height:
         GAME_STATE_PLAYER2 = 5
         return GAME_STATE_PLAYER2
+    elif button_x + 415 <= pos[0] <= button_x + 415 + button_width and button_y + 14 <= pos[1] <= button_y + 14 + button_height:
+        if LASTBETP2 != 0:
+            GAME_STATE_PLAYER2 = 7
+            bet(LASTBETP2)
+            moreCards(PLAYER2)
+            GAME_STATE_PLAYER2 = 5
+            GAME_STATE_PLAYER3 = 1
+            return GAME_STATE_PLAYER2
     if button_x + 615 <= pos[0] <= button_x + 615 + button_width and button_y <= pos[1] <= button_y + button_height:
         moreCards(PLAYER3)
     elif button_x + 514 <= pos[0] <= button_x + 514 + button_width and button_y <= pos[1] <= button_y + button_height:
         GAME_STATE_PLAYER3 = 5
         return GAME_STATE_PLAYER3
+    elif button_x + 715 <= pos[0] <= button_x + 715 + button_width and button_y <= pos[1] <= button_y + button_height:
+        if LASTBETP3 != 0:
+            GAME_STATE_PLAYER3 = 7
+            bet(LASTBETP3)
+            moreCards(PLAYER3)
+            GAME_STATE_PLAYER3 = 5
+            return GAME_STATE_PLAYER3
 
     # Check if the click was within the reload button area
     if RELOAD_BUTTON.collidepoint(pos):
@@ -656,22 +694,19 @@ def bet(amount):
         MONEYP1 -= amount
         GAME_STATE_PLAYER1 = 1
         GAME_STATE_PLAYER2 = 7
-        LASTBETP1 = amount
-        print("Player 1 money: ", MONEYP1)
-        return MONEYP1, GAME_STATE_PLAYER1
+        LASTBETP1 += amount
+        return MONEYP1, GAME_STATE_PLAYER1, LASTBETP1
     elif GAME_STATE_PLAYER2 == 7:
         MONEYP2 -= amount
         GAME_STATE_PLAYER2 = 1
         GAME_STATE_PLAYER3 = 7
-        LASTBETP2 = amount
-        print("Player 2 money: ", MONEYP2)
-        return MONEYP2, GAME_STATE_PLAYER2
+        LASTBETP2 += amount
+        return MONEYP2, GAME_STATE_PLAYER2, LASTBETP2
     elif GAME_STATE_PLAYER3 == 7:
         MONEYP3 -= amount
         GAME_STATE_PLAYER3 = 1
-        LASTBETP3 = amount
-        print("Player 3 money: ", MONEYP3)
-        return MONEYP3, GAME_STATE_PLAYER3
+        LASTBETP3 += amount
+        return MONEYP3, GAME_STATE_PLAYER3, LASTBETP3
 
 
 # Game logic

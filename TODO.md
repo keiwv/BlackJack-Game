@@ -10,9 +10,9 @@
     [X] - Validar que el sistema identifiquen el AS como 1 u 11
         [X] - Validar que el usuario identifique el AS como 1 u 11
         [X] - Si al momento de repartir toca 2 AS (11) uno se cambia por 1 automaticamente
-    [ ] - Agregar botones
-        [ ] - Agregar funcionalidades como el "DOUBLE"
-            [ ] - Anadir boton de double con su condicion de uso
+    [X] - Agregar botones
+        [X] - Agregar funcionalidades como el "DOUBLE"
+            [X] - Anadir boton de double con su condicion de uso
         [X] - Agregar boton para "STAND"
             [X] - Agregar la funcion y que pase de turno 
             [X] - Hacer que pase al siguiente jugador
@@ -24,7 +24,7 @@
         [X] - Seleccionar un palo de forma aleatoria
     [X] - La casa debe mostrar solo 1 carta, la otra tiene que ser oculta
         [X] - La casa muestra sus cartas cuando terminan las apuestas
-        [ ] - Agregar funcionalidad de "INSURANCE"
+        [X] - Agregar funcionalidad de "INSURANCE"
 
 3. Hacer las fichas de las apuestas
     [X] - Se debe poner de alguna manera controlar las apuestas
