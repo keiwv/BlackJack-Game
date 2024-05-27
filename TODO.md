@@ -1,7 +1,7 @@
 1. Hacer la logica del juego
     [X] - El juego reparte 2 cartas a cada jugador incluida la casa
         [X] - Validar si te toca Blackjack en la primera jugada
-            [ ] - Pagar apuesta 3:2 (1.5x)
+            [X] - Pagar apuesta 3:2 (1.5x)
     [X] - El juego es capaz de notar cuando la casa gana y automaticamente termina la ronda
     [X] - El juego puede dejar pedir otra carta 
     [X] - EL juego debe decidir si perdiste con la suma de tus cartas
@@ -17,8 +17,7 @@
             [X] - Agregar la funcion y que pase de turno 
             [X] - Hacer que pase al siguiente jugador
     [X] - Al finalizar la ronda, limpiar la mesa y volver a jugar
-        [ ] - Agregar condicion de derrota si algun jugador se queda sin dinero
-        [ ] - Agregar posibilidad de retirarse
+        [X] - Agregar condicion de derrota si algun jugador se queda sin dinero
 
 2. Hacer que se muestren las cartas que le toco a cada jugador
     [X] - Con las variables NAMECARDS se tiene que tomar la carta de images

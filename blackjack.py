@@ -44,7 +44,7 @@ LASTBETP3 = 0
 PAYP1 = 0
 PAYP2 = 0
 PAYP3 = 0
-
+INSURANCEBET = 0
 
 # ------------------------------ BUTTONS ------------------------------
 
@@ -129,7 +129,7 @@ def update():
 
 
 def draw():
-    global GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3, NAMECARD1, NAMECARD2, NAMECARD3, NAMECARDHOUSE, MONEYP1, MONEYP2, MONEYP3, PAYP1, PAYP2, PAYP3, LASTBETP1, LASTBETP2, LASTBETP3
+    global GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3, NAMECARD1, NAMECARD2, NAMECARD3, NAMECARDHOUSE, MONEYP1, MONEYP2, MONEYP3, PAYP1, PAYP2, PAYP3, LASTBETP1, LASTBETP2, LASTBETP3, INSURANCEBET
 
     screen.clear()
     screen.blit('blackjack_fondo', (0, 0))
@@ -183,8 +183,15 @@ def draw():
     else:
         if GAME_STATE_HOUSE == 3:
             drawCardsDisplay()
-            if (NAMECARDHOUSE[0] == "As_de_Corazones" or NAMECARDHOUSE[0] == "As_de_Diamantes" or NAMECARDHOUSE[0] == "As_de_Espadas" or NAMECARDHOUSE[0] == "As_de_Tréboles"):
-                print("Insurance")  # ! FALTA AGREGAR CONDICIONES DEL INSURANCE
+            if (INSURANCEBET == 1):
+                drawButtonInsuranceP1()
+                drawButtonInsuranceP2()
+                drawButtonInsuranceP3()
+                if GAME_STATE_PLAYER1 == 6 and GAME_STATE_PLAYER2 == 6 and GAME_STATE_PLAYER3 == 6:
+                    GAME_STATE_PLAYER1 = 1
+                    GAME_STATE_PLAYER2 = 1
+                    GAME_STATE_PLAYER3 = 1
+                    INSURANCEBET = 0
             else:
                 drawCardsHouse()
                 screen.draw.text("BLACKJACK", (470, 100),
@@ -221,8 +228,15 @@ def draw():
                     poorPlayer()
         else:
             drawCardsDisplay()
-            if (NAMECARDHOUSE[0] == "As_de_Corazones" or NAMECARDHOUSE[0] == "As_de_Diamantes" or NAMECARDHOUSE[0] == "As_de_Espadas" or NAMECARDHOUSE[0] == "As_de_Tréboles"):
-                print("Insurance")
+            if (INSURANCEBET == 1):
+                drawButtonInsuranceP1()
+                drawButtonInsuranceP2()
+                drawButtonInsuranceP3()
+                if GAME_STATE_PLAYER1 == 6 and GAME_STATE_PLAYER2 == 6 and GAME_STATE_PLAYER3 == 6:
+                    GAME_STATE_PLAYER1 = 1
+                    GAME_STATE_PLAYER2 = 1
+                    GAME_STATE_PLAYER3 = 1
+                    INSURANCEBET = 0
             else:
                 if GAME_STATE_PLAYER1 != 9:
                     if GAME_STATE_PLAYER1 == 1:
@@ -359,6 +373,42 @@ def drawButtonsP3():
     screen.draw.text("STAND", (button_x + 520, button_y + 10),
                      fontsize=30, color="black")
 
+
+def drawButtonInsuranceP1():
+    screen.draw.filled_rect(
+        Rect((button_x - 75, button_y - 220), (button_width + 80, button_height)), button_color_hit)
+    screen.draw.text("INSURANCE", (button_x - 55, button_y - 210),
+                     fontsize=30, color="black")
+
+    screen.draw.filled_rect(
+        Rect((button_x - 75, button_y - 180), (button_width + 80, button_height)), button_color_stand)
+    screen.draw.text("NO INSURANCE", (button_x - 73, button_y - 170),
+                     fontsize=30, color="black")
+
+
+def drawButtonInsuranceP2():
+    screen.draw.filled_rect(
+        Rect((button_x - 85 + 308, button_y - 206), (button_width + 80, button_height)), button_color_hit)
+    screen.draw.text("INSURANCE", (button_x - 65 + 308, button_y - 196),
+                     fontsize=30, color="black")
+
+    screen.draw.filled_rect(
+        Rect((button_x - 85 + 308, button_y - 166), (button_width + 80, button_height)), button_color_stand)
+    screen.draw.text("NO INSURANCE", (button_x - 83 + 308, button_y - 156),
+                     fontsize=30, color="black")
+
+
+def drawButtonInsuranceP3():
+    screen.draw.filled_rect(
+        Rect((button_x - 75 + 615, button_y - 220), (button_width + 80, button_height)), button_color_hit)
+    screen.draw.text("INSURANCE", (button_x - 55 + 615, button_y - 210),
+                     fontsize=30, color="black")
+
+    screen.draw.filled_rect(
+        Rect((button_x - 75 + 615, button_y - 180), (button_width + 80, button_height)), button_color_stand)
+    screen.draw.text("NO INSURANCE", (button_x - 73 + 615, button_y - 170),
+                     fontsize=30, color="black")
+
 # Function to know if the mouse is clicked
 
 
@@ -437,6 +487,66 @@ def on_mouse_down(pos):
             if MONEYP3 >= 500:
                 bet(500)
                 return MONEYP3
+
+    # Insurance button
+    if button_x - 75 <= pos[0] <= button_x - 75 + button_width + 80:
+        if button_y - 220 <= pos[1] <= button_y - 220 + button_height:
+            handle_insurance(PLAYER1)
+        elif button_y - 180 <= pos[1] <= button_y - 180 + button_height:
+            handle_no_insurance(PLAYER1)
+
+    if button_x - 75 + 308 <= pos[0] <= button_x - 75 + 308 + button_width + 80:
+        if button_y - 206 <= pos[1] <= button_y - 206 + button_height:
+            handle_insurance(PLAYER2)
+        elif button_y - 166 <= pos[1] <= button_y - 166 + button_height:
+            handle_no_insurance(PLAYER2)
+
+    if button_x - 75 + 615 <= pos[0] <= button_x - 75 + 615 + button_width + 80:
+        if button_y - 220 <= pos[1] <= button_y - 220 + button_height:
+            handle_insurance(PLAYER3)
+        elif button_y - 180 <= pos[1] <= button_y - 180 + button_height:
+            handle_no_insurance(PLAYER3)
+
+
+def handle_insurance(player):
+    global GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3, GAME_STATE_HOUSE, MONEYP1, MONEYP2, MONEYP3, PLAYER1, PLAYER2, PLAYER3, HOUSE, LASTBETP1, LASTBETP2, LASTBETP3
+    if player == PLAYER1:
+        if GAME_STATE_HOUSE == 3:
+            MONEYP1 += LASTBETP1
+        else:
+            INSURANCE = math.floor(LASTBETP1 / 2)
+            MONEYP1 -= INSURANCE
+        GAME_STATE_PLAYER1 = 6
+    if player == PLAYER2:
+        if GAME_STATE_HOUSE == 3:
+            MONEYP2 += LASTBETP2
+        else:
+            INSURANCE = math.floor(LASTBETP2 / 2)
+            MONEYP2 -= INSURANCE
+        GAME_STATE_PLAYER2 = 6
+    if player == PLAYER3:
+        if GAME_STATE_HOUSE == 3:
+            MONEYP3 += LASTBETP3
+        else:
+            INSURANCE = math.floor(LASTBETP3 / 2)
+            MONEYP3 -= INSURANCE
+        GAME_STATE_PLAYER3 = 6
+
+
+def handle_no_insurance(player):
+    global GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3, GAME_STATE_HOUSE, MONEYP1, MONEYP2, MONEYP3, PLAYER1, PLAYER2, PLAYER3, HOUSE, LASTBETP1, LASTBETP2, LASTBETP3
+    if player == PLAYER1:
+        if GAME_STATE_HOUSE == 3:
+            MONEYP1 -= LASTBETP1
+        GAME_STATE_PLAYER1 = 6
+    if player == PLAYER2:
+        if GAME_STATE_HOUSE == 3:
+            MONEYP2 -= LASTBETP2
+        GAME_STATE_PLAYER2 = 6
+    if player == PLAYER3:
+        if GAME_STATE_HOUSE == 3:
+            MONEYP3 -= LASTBETP3
+        GAME_STATE_PLAYER3 = 6
 
 
 def poorPlayer():
@@ -564,15 +674,11 @@ def bet(amount):
         return MONEYP3, GAME_STATE_PLAYER3
 
 
-#! AGREGAR LOGICA DE INSURANCE PERO PRIMERO LA APUESTA
-def insurance():
-    return GAME_STATE_HOUSE == 6
-
 # Game logic
 
 
 def logic():
-    global GAME_STATE_HOUSE, GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3, PLAYER1, PLAYER2, PLAYER3, HOUSE
+    global GAME_STATE_HOUSE, GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3, PLAYER1, PLAYER2, PLAYER3, HOUSE, INSURANCEBET
     numbers = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
     firstPlay = 0  # This is to control the first play of the house
 
@@ -616,6 +722,8 @@ def logic():
         if firstPlay == 0 and sum(HOUSE) == 21:
             GAME_STATE_HOUSE = 3
             firstPlay = 1
+        if HOUSE[0] == 11 or HOUSE[0] == 1:
+            INSURANCEBET = 1
 
     drawCards()
 
@@ -767,7 +875,7 @@ def resizeCards(image):
 
 def restart():
     global PLAYER1, PLAYER2, PLAYER3, HOUSE, NAMECARD1, NAMECARD2, NAMECARD3, NAMECARDHOUSE, GAME_STATE_HOUSE, GAME_STATE_PLAYER1, GAME_STATE_PLAYER2, GAME_STATE_PLAYER3, LASTBETP1, LASTBETP2, LASTBETP3, MONEYP1, MONEYP2, MONEYP3
-    global PAYP1, PAYP2, PAYP3
+    global PAYP1, PAYP2, PAYP3, INSURANCEBET
     PLAYER1 = []
     PLAYER2 = []
     PLAYER3 = []
@@ -790,6 +898,8 @@ def restart():
     PAYP1 = 0
     PAYP2 = 0
     PAYP3 = 0
+
+    INSURANCEBET = 0
 
     logic()
 
