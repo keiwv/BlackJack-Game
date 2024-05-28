@@ -864,7 +864,7 @@ def drawCardsDisplay():
         if card_image:
             card_image = resizeCards(card_image)
             card_pos = (PLAYER1_IMAGE_POS[0] +
-                        i * 80, PLAYER1_IMAGE_POS[1] - 185)
+                        i * 20, PLAYER1_IMAGE_POS[1] - (i + 3.5) * (50))
             screen.blit(card_image, card_pos)
         else:
             print(f"Imagen no encontrada: {card_name}")
@@ -874,8 +874,8 @@ def drawCardsDisplay():
         card_image = IMAGES.get(card_name)
         if card_image:
             card_image = resizeCards(card_image)
-            card_pos = (PLAYER2_IMAGE_POS[0] - 30 +
-                        i * 80, PLAYER2_IMAGE_POS[1] - 170)
+            card_pos = (PLAYER2_IMAGE_POS[0] +
+                        i * 20, PLAYER2_IMAGE_POS[1] - (i + 3.5) * (50))
             screen.blit(card_image, card_pos)
         else:
             print(f"Imagen no encontrada: {card_name}")
@@ -885,8 +885,8 @@ def drawCardsDisplay():
         card_image = IMAGES.get(card_name)
         if card_image:
             card_image = resizeCards(card_image)
-            card_pos = (PLAYER3_IMAGE_POS[0] - 50 +
-                        i * 80, PLAYER3_IMAGE_POS[1] - 185)
+            card_pos = (PLAYER3_IMAGE_POS[0] +
+                        i * 20, PLAYER3_IMAGE_POS[1] - (i + 3.5) * (50))
             screen.blit(card_image, card_pos)
         else:
             print(f"Imagen no encontrada: {card_name}")
