@@ -17,7 +17,6 @@ CHIP_VALUES = [25, 50, 100, 500]
 game = BlackjackGame.BlackjackGame()
 game.resetGame()
 
-
 def on_mouse_down(pos):
     if game.phase == "betting":
         for i, chip_pos in enumerate(CHIP_POSITIONS):
@@ -42,9 +41,16 @@ def on_mouse_down(pos):
             game.phase = "houseTurn"
             game.houseLogic()
 
+    # Check if "Reload" button is clicked
+    if game.reloadButtonPos[0] <= pos[0] <= game.reloadButtonPos[0] + 75 and \
+       game.reloadButtonPos[1] <= pos[1] <= game.reloadButtonPos[1] + 75:
+        game.resetGame()
+
 
 def draw():
     game.draw(screen)
 
 
 pgzrun.go()
+
+#! Cuando presiono stand o hit me cambia las cartas
