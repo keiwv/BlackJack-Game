@@ -52,24 +52,46 @@ class BlackjackGame:
         return images
 
     def resetGame(self):
-        self.player.cards.clear()
-        self.player.lastBet = 0
-        self.house.cards.clear()
+        self.player.reset()
+        self.house.reset()
         self.phase = "betting"
+        print("Game reset. Ready for a new round.")  # Depuración
+
 
     def dealInitialCards(self):
-        self.player.cards = []
-        self.house.cards = []
-        for _ in range(2):
-            self.player.hit()
-            self.house.hit()
+        if not self.player.cards and not self.house.cards:  # Solo asignar si no hay cartas
+            for _ in range(2):
+                self.player.hit()
+                self.house.hit()
+            print(f"Initial cards dealt: Player {self.player.cards}, House {self.house.cards}")  # Depuración
+        else:
+            print("Cards already dealt, not regenerating.")  # Depuración
+
+
+
 
     def houseLogic(self):
+        if self.phase != "houseTurn":
+            print("House logic skipped: Not the house turn.")  # Depuración
+            return
+
+        print(f"House starts with cards: {self.house.cards}")  # Depuración
+
+        # Solo permitir que el dealer tome cartas si las actuales son válidas
         while self.house.getCardValuesSum() < 17:
             self.house.hit()
+            print(f"House hits: Current cards {self.house.cards}, Sum: {self.house.getCardValuesSum()}")  # Depuración
 
-        # Cambiar a la fase de resultados
+            if len(self.house.cards) > 5:  # Evitar demasiadas cartas
+                print("House stops hitting due to too many cards.")
+                break
+
         self.phase = "results"
+        print(f"House logic ends with cards: {self.house.cards}")  # Depuración
+
+
+
+
 
     def draw(self, screen):
         screen.clear()
@@ -93,31 +115,40 @@ class BlackjackGame:
             screen.blit(reload_image, self.reloadButtonPos)
 
     def drawPlayerCards(self, screen, player):
+        if not player.cards:
+            print(f"No cards to draw for {player.name}")  # Depuración
+            return
+
+        print(f"Drawing cards for {player.name}: {player.cards}")  # Depuración
         for i, card in enumerate(player.cards):
             card_name = self.getCardName(card)
             card_image = self.images.get(card_name)
             if card_image:
                 card_image = self.resizeCards(card_image)
-                # Usar posición específica para el jugador
                 card_pos = (
                     player.position[0] + i * 20,
                     player.position[1] - (i + 3.5) * 50
                 )
                 screen.blit(card_image, card_pos)
             else:
-                print(f"Imagen no encontrada para la carta: {card_name}")
+                print(f"Image not found for card: {card_name}")
+
+
 
     def drawHouseCards(self, screen):
+        if not self.house.cards:  # Depuración
+            print("No cards to draw for the house")
+            return
+
         for i, card in enumerate(self.house.cards):
             card_name = self.getCardName(card)
             card_image = self.images.get(card_name)
             if card_image:
                 card_image = self.resizeCards(card_image)
-                # Usar posición específica para la casa
                 card_pos = (470 + i * 80, 135)
                 screen.blit(card_image, card_pos)
             else:
-                print(f"Imagen no encontrada para la carta: {card_name}")
+                print(f"Image not found for card: {card_name}")
 
     def drawBettingPhase(self, screen):
         screen.draw.text("Place your bets!", (CENTER_X - 100,

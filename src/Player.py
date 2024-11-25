@@ -19,20 +19,24 @@ class Player:
             self.lastBet += amount
 
     def hit(self):
-        # Valor aleatorio para la carta
-        # 1 a 13 para As, 2-10, Jota, Reina, Rey
+        print(f"Player {self.name} hits!")  # Depuración
         value = random.choice(range(1, 14))
-        # 0 a 3 para Corazones, Diamantes, Tréboles y Picas
         suit = random.choice(range(4))
 
         # Asignar valores a las cartas
         if value == 1:  # As
             value = 11  # Inicialmente, el As vale 11
-        elif value > 10:  # Figuras (Jota, Reina, Rey)
+        elif value > 10:  # Figuras
             value = 10
 
-        self.cards.append((value, suit))  # Añadir la carta como una tupla
+        card = (value, suit)
+        self.cards.append(card)  # Añadir la carta sin alterar las existentes
+        print(f"Card added: {card}, Current cards: {self.cards}")  # Depuración
         self.adjustForAces()
+
+
+
+
 
     def adjustForAces(self):
         # Extrae solo los valores de las cartas
