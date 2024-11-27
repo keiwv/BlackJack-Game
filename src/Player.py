@@ -17,25 +17,27 @@ class Player:
         if self.money >= amount:
             self.money -= amount
             self.lastBet += amount
+            print(f"Placed bet: {amount}, Remaining money: {self.money}")  # Depuración
+        else:
+            print("Insufficient funds for this bet.")  # Depuración
+
 
     def hit(self):
         print(f"Player {self.name} hits!")  # Depuración
-        value = random.choice(range(1, 14))
-        suit = random.choice(range(4))
+        value = random.choice(range(1, 14))  # Valores de 1 a 13
+        suit = random.choice(range(4))      # Figuras: 0, 1, 2, 3
 
-        # Asignar valores a las cartas
+        # Asignar valor numérico correcto
         if value == 1:  # As
-            value = 11  # Inicialmente, el As vale 11
-        elif value > 10:  # Figuras
-            value = 10
+            card = (11, suit)  # Representa el As inicialmente como 11
+        elif value > 10:  # J, Q, K
+            card = (10, suit)  # Representa las figuras con valor 10
+        else:
+            card = (value, suit)
 
-        card = (value, suit)
-        self.cards.append(card)  # Añadir la carta sin alterar las existentes
+        self.cards.append(card)
         print(f"Card added: {card}, Current cards: {self.cards}")  # Depuración
         self.adjustForAces()
-
-
-
 
 
     def adjustForAces(self):

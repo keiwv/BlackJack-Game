@@ -22,7 +22,7 @@ CHIP_VALUES = [25, 50, 100, 500]
 
 class BlackjackGame:
     def __init__(self):
-        self.player = Player("Player", (300, 600))
+        self.player = Player("Player 1", (602, 652))
         self.house = Player("House", (CENTER_X, 100))
         self.images = self.loadImages()
         self.phase = "betting"  # Game phases: betting, playing, houseTurn, results
@@ -114,25 +114,29 @@ class BlackjackGame:
         if reload_image:
             screen.blit(reload_image, self.reloadButtonPos)
 
-    def drawPlayerCards(self, screen, player):
+
+    def drawPlayerCards(self, screen, player, position=(602, 652)):
         if not player.cards:
             print(f"No cards to draw for {player.name}")  # Depuración
             return
 
-        print(f"Drawing cards for {player.name}: {player.cards}")  # Depuración
+        # Usa la posición predeterminada si no se proporciona una
+        position = position or player.position
+        print(f"Drawing cards for {player.name}: {player.cards} at position {position}")  # Depuración
+
         for i, card in enumerate(player.cards):
             card_name = self.getCardName(card)
             card_image = self.images.get(card_name)
             if card_image:
                 card_image = self.resizeCards(card_image)
+                # Ajusta las coordenadas de cada carta
                 card_pos = (
-                    player.position[0] + i * 20,
-                    player.position[1] - (i + 3.5) * 50
+                    position[0] + i * 50,
+                    position[1] - (i + 3.5) * 45
                 )
                 screen.blit(card_image, card_pos)
             else:
                 print(f"Image not found for card: {card_name}")
-
 
 
     def drawHouseCards(self, screen):
@@ -151,14 +155,13 @@ class BlackjackGame:
                 print(f"Image not found for card: {card_name}")
 
     def drawBettingPhase(self, screen):
+        self.drawPlayerInfo(screen, self.player)
         screen.draw.text("Place your bets!", (CENTER_X - 100,
                          CENTER_Y - 50), fontsize=40, color="yellow")
         for i, chip_pos in enumerate(CHIP_POSITIONS):
             chip_image = self.images.get(f"chip{CHIP_VALUES[i]}")
             if chip_image:
                 screen.blit(chip_image, chip_pos)
-        screen.draw.text(f"{self.player.name}: ${self.player.money}",
-                         (200, HEIGHT - 150), fontsize=30, color="white")
         screen.draw.filled_rect(
             Rect(self.startButtonPos, (BUTTON_WIDTH,
                  BUTTON_HEIGHT)), BUTTON_COLOR_START
@@ -196,22 +199,46 @@ class BlackjackGame:
         screen.draw.text(result, (CENTER_X - 50, CENTER_Y - 50),
                          fontsize=40, color="yellow")
 
+    def drawPlayerInfo(self, screen, player, position = (602, 652), spacing_horizontal = 50):
+        """
+        Dibuja el texto con el nombre del jugador y su dinero.
+        """
+        player_name_pos = (position[0], position[1] + 20)  # Texto justo debajo de las cartas
+        money_pos = (position[0], position[1] + 50)       # Dinero debajo del nombre
+
+        # Dibuja el nombre del jugador
+        screen.draw.text(f"{player.name}", 
+                        player_name_pos, 
+                        fontsize=30, 
+                        color="white")
+
+        # Dibuja el dinero del jugador
+        screen.draw.text(f"Money: ${player.money}", 
+                        money_pos, 
+                        fontsize=25, 
+                        color="yellow")
+
+
+
     def getCardName(self, card):
-        # Asignar nombres para figuras y valores
         valores = {1: "As", 11: "Jota", 12: "Reina", 13: "Rey"}
         figuras = ["Corazones", "Diamantes", "Tréboles", "Espadas"]
 
-        valor = card[0]
-        figura = figuras[card[1]]
+        valor, figura_id = card
+        figura = figuras[figura_id]
 
-        # Si el valor es 10, asignar figura aleatoria
-        if valor == 10:
-            nombre_figura = random.choice(["Jota", "Reina", "Rey"])
-            return f"{nombre_figura}_de_{figura}"
-        elif valor in valores:
-            return f"{valores[valor]}_de_{figura}"
+        if valor == 11:  # As
+            return f"As_de_{figura}"
+        elif valor == 10:  # Cartas figuradas: J, Q, K
+            # Selecciona el nombre correcto basado en el índice (J: 11, Q: 12, K: 13)
+            if card[0] == 10 and figura_id < 3:  # J, Q o K basadas en asignación previa
+                nombre_figura = ["Jota", "Reina", "Rey"][figura_id]
+                return f"{nombre_figura}_de_{figura}"
+            return f"10_de_{figura}"
         else:
             return f"{valor}_de_{figura}"
+
+
 
     def resizeCards(self, card_image):
         return pygame.transform.scale(card_image, (CARD_WIDTH, CARD_HEIGHT))
