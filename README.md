@@ -8,6 +8,7 @@ Before you start, make sure to install `pygame` to run the game.
 
 ```bash
 pip install pygame
+pip install pgzero
 ```
 
 ## How to play
