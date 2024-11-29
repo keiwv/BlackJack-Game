@@ -17,17 +17,15 @@ class Player:
         if self.money >= amount:
             self.money -= amount
             self.lastBet += amount
-            print(f"Placed bet: {amount}, Remaining money: {self.money}")  # Depuración
         else:
-            print("Insufficient funds for this bet.")  # Depuración
+            print("Insufficient funds for this bet.")  
 
 
     def hit(self):
-        print(f"Player {self.name} hits!")  # Depuración
         value = random.choice(range(1, 14))  # Valores de 1 a 13
         suit = random.choice(range(4))      # Figuras: 0, 1, 2, 3
 
-        # Asignar valor numérico correcto
+        # Asignar valor numerico correcto
         if value == 1:  # As
             card = (11, suit)  # Representa el As inicialmente como 11
         elif value > 10:  # J, Q, K
@@ -36,7 +34,6 @@ class Player:
             card = (value, suit)
 
         self.cards.append(card)
-        print(f"Card added: {card}, Current cards: {self.cards}")  # Depuración
         self.adjustForAces()
 
 
@@ -55,8 +52,10 @@ class Player:
             if card[0] == 11 and valores.count(11) < sum(1 for v in valores if v == 11):
                 self.cards[i] = (1, card[1])  # Cambia el valor del As
 
+
     def hasBlackjack(self):
-        return sum(self.cards) == 21
+        return self.getCardValuesSum() == 21 and len(self.cards) == 2
+
 
     def isBusted(self):
         return self.getCardValuesSum() > 21

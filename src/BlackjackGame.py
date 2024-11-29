@@ -4,7 +4,7 @@ import pygame
 from pygame import Rect
 import random
 
-# Constants
+# Constantes
 WIDTH, HEIGHT = 1286, 772
 CENTER_X, CENTER_Y = WIDTH // 2, HEIGHT // 2
 BUTTON_WIDTH, BUTTON_HEIGHT = 150, 50
@@ -14,8 +14,7 @@ BUTTON_COLOR_STAND = (200, 0, 0)
 CARD_WIDTH, CARD_HEIGHT = 75, 125
 PLAYER1_IMAGE_POS = (300, 600)
 
-
-# Chip positions and values
+# Valores y posiciones de las fichas
 CHIP_POSITIONS = [(60, 200), (60, 280), (60, 360), (60, 440)]
 CHIP_VALUES = [25, 50, 100, 500]
 
@@ -25,7 +24,7 @@ class BlackjackGame:
         self.player = Player("Player 1", (602, 652))
         self.house = Player("House", (CENTER_X, 100))
         self.images = self.loadImages()
-        self.phase = "betting"  # Game phases: betting, playing, houseTurn, results
+        self.phase = "betting"  # Fases: betting, playing, houseTurn, results
         self.startButtonPos = (CENTER_X - 75, CENTER_Y +
                                50)  # Button to start game
         self.hitButtonPos = (300, 700)  # Hit button
@@ -41,21 +40,20 @@ class BlackjackGame:
                 key = os.path.splitext(filename)[0]
                 images[key] = pygame.image.load(path)
 
-        # Agregar imágenes de fichas
-        images["chip25"] = pygame.image.load("ficha25.png")
-        images["chip50"] = pygame.image.load("ficha50.png")
-        images["chip100"] = pygame.image.load("ficha100.png")
-        images["chip500"] = pygame.image.load("ficha500.png")
+        # Agregar imagenes de fichas
+        images["chip25"] = pygame.image.load("./assets/images/chips/ficha25.png")
+        images["chip50"] = pygame.image.load("./assets/images/chips/ficha50.png")
+        images["chip100"] = pygame.image.load("./assets/images/chips/ficha100.png")
+        images["chip500"] = pygame.image.load("./assets/images/chips/ficha500.png")
 
-        # Cargar la imagen del botón de recarga
-        images["reload"] = pygame.image.load("./assets/images/reload.png")
+        # Cargar la imagen del boton de recarga
+        images["reload"] = pygame.image.load("./assets/images/utils/reload.png")
         return images
 
     def resetGame(self):
         self.player.reset()
         self.house.reset()
         self.phase = "betting"
-        print("Game reset. Ready for a new round.")  # Depuración
 
 
     def dealInitialCards(self):
@@ -63,33 +61,26 @@ class BlackjackGame:
             for _ in range(2):
                 self.player.hit()
                 self.house.hit()
-            print(f"Initial cards dealt: Player {self.player.cards}, House {self.house.cards}")  # Depuración
         else:
-            print("Cards already dealt, not regenerating.")  # Depuración
+            print("Cards already dealt, not regenerating.")  
 
 
 
 
     def houseLogic(self):
         if self.phase != "houseTurn":
-            print("House logic skipped: Not the house turn.")  # Depuración
             return
 
-        print(f"House starts with cards: {self.house.cards}")  # Depuración
 
-        # Solo permitir que el dealer tome cartas si las actuales son válidas
+        # Solo permitir que el dealer tome cartas si las actuales son validas
         while self.house.getCardValuesSum() < 17:
             self.house.hit()
-            print(f"House hits: Current cards {self.house.cards}, Sum: {self.house.getCardValuesSum()}")  # Depuración
 
             if len(self.house.cards) > 5:  # Evitar demasiadas cartas
                 print("House stops hitting due to too many cards.")
                 break
 
         self.phase = "results"
-        print(f"House logic ends with cards: {self.house.cards}")  # Depuración
-
-
 
 
 
@@ -117,12 +108,9 @@ class BlackjackGame:
 
     def drawPlayerCards(self, screen, player, position=(602, 652)):
         if not player.cards:
-            print(f"No cards to draw for {player.name}")  # Depuración
             return
 
-        # Usa la posición predeterminada si no se proporciona una
         position = position or player.position
-        print(f"Drawing cards for {player.name}: {player.cards} at position {position}")  # Depuración
 
         for i, card in enumerate(player.cards):
             card_name = self.getCardName(card)
@@ -140,8 +128,7 @@ class BlackjackGame:
 
 
     def drawHouseCards(self, screen):
-        if not self.house.cards:  # Depuración
-            print("No cards to draw for the house")
+        if not self.house.cards:  
             return
 
         for i, card in enumerate(self.house.cards):
@@ -153,6 +140,8 @@ class BlackjackGame:
                 screen.blit(card_image, card_pos)
             else:
                 print(f"Image not found for card: {card_name}")
+
+
 
     def drawBettingPhase(self, screen):
         self.drawPlayerInfo(screen, self.player)
@@ -169,6 +158,8 @@ class BlackjackGame:
         screen.draw.text(
             "Start", (self.startButtonPos[0] + 30, self.startButtonPos[1] + 10), fontsize=30, color="black")
 
+
+
     def drawPlayerActions(self, screen, player):
         screen.draw.filled_rect(
             Rect(self.hitButtonPos, (BUTTON_WIDTH, BUTTON_HEIGHT)), BUTTON_COLOR_HIT
@@ -181,6 +172,8 @@ class BlackjackGame:
         )
         screen.draw.text(
             "Stand", (self.standButtonPos[0] + 25, self.standButtonPos[1] + 10), fontsize=30, color="black")
+
+
 
     def drawResults(self, screen):
         playerSum = self.player.getCardValuesSum()  # Obtener la suma del jugador
@@ -199,10 +192,11 @@ class BlackjackGame:
         screen.draw.text(result, (CENTER_X - 50, CENTER_Y - 50),
                          fontsize=40, color="yellow")
 
+        self.resolveBets()
+
+
+
     def drawPlayerInfo(self, screen, player, position = (602, 652), spacing_horizontal = 50):
-        """
-        Dibuja el texto con el nombre del jugador y su dinero.
-        """
         player_name_pos = (position[0], position[1] + 20)  # Texto justo debajo de las cartas
         money_pos = (position[0], position[1] + 50)       # Dinero debajo del nombre
 
@@ -230,7 +224,7 @@ class BlackjackGame:
         if valor == 11:  # As
             return f"As_de_{figura}"
         elif valor == 10:  # Cartas figuradas: J, Q, K
-            # Selecciona el nombre correcto basado en el índice (J: 11, Q: 12, K: 13)
+            # Selecciona el nombre correcto basado en el indice (J: 11, Q: 12, K: 13)
             if card[0] == 10 and figura_id < 3:  # J, Q o K basadas en asignación previa
                 nombre_figura = ["Jota", "Reina", "Rey"][figura_id]
                 return f"{nombre_figura}_de_{figura}"
@@ -242,3 +236,37 @@ class BlackjackGame:
 
     def resizeCards(self, card_image):
         return pygame.transform.scale(card_image, (CARD_WIDTH, CARD_HEIGHT))
+
+
+
+    def resolveBets(self):
+        player_sum = self.player.getCardValuesSum()
+        house_sum = self.house.getCardValuesSum()
+        blackjack_payout = 1.5
+
+        if self.player.hasBlackjack() and not self.house.hasBlackjack():
+            # Blackjack del jugador
+            winnings = int(self.player.lastBet * blackjack_payout)
+            self.player.money += winnings + self.player.lastBet
+            print(f"Blackjack! Player wins ${winnings}. Total money: {self.player.money}")
+        elif not self.player.hasBlackjack() and self.house.hasBlackjack():
+            # Blackjack de la casa
+            print("House Blackjack! Player loses.")
+        elif self.player.isBusted():
+            # Jugador pierde por pasarse
+            print("Player busted! Bet lost.")
+        elif self.house.isBusted() or player_sum > house_sum:
+            # Jugador gana
+            winnings = self.player.lastBet * 2
+            self.player.money += winnings
+            print(f"Player wins! Bet: ${self.player.lastBet}, Winnings: ${winnings}. Total money: {self.player.money}")
+        elif player_sum == house_sum:
+            # Empate
+            self.player.money += self.player.lastBet
+            print(f"It's a tie! Bet returned. Total money: {self.player.money}")
+        else:
+            # Casa gana
+            print("Player loses. Better luck next time.")
+        
+        # Reinicia la apuesta para la proxima ronda
+        self.player.lastBet = 0
